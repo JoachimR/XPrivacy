@@ -1,23 +1,17 @@
 package biz.bokhorst.xprivacy;
 
+import android.accounts.*;
+import android.os.Binder;
+import android.os.Bundle;
+import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
-
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorDescription;
-import android.accounts.AuthenticatorException;
-import android.accounts.OnAccountsUpdateListener;
-import android.accounts.OperationCanceledException;
-import android.os.Binder;
-import android.os.Bundle;
-import android.util.Log;
 
 public class XAccountManager extends XHook {
 	private Methods mMethod;
@@ -222,7 +216,9 @@ public class XAccountManager extends XHook {
 			} else
 				Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
 		}
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName());
+    }
 
 	private Account[] filterAccounts(Account[] original, int uid) {
 		List<Account> listAccount = new ArrayList<Account>();
@@ -389,7 +385,7 @@ public class XAccountManager extends XHook {
 
 		@Override
 		public void run(AccountManagerFuture<Account[]> future) {
-			mCallback.run(new XAccountManager.XFutureAccount(future, mUid));
+			mCallback.run(new XFutureAccount(future, mUid));
 		}
 	}
 
@@ -404,7 +400,7 @@ public class XAccountManager extends XHook {
 
 		@Override
 		public void run(AccountManagerFuture<Bundle> future) {
-			mCallback.run(new XAccountManager.XFutureBundle(future, mUid));
+			mCallback.run(new XFutureBundle(future, mUid));
 		}
 	}
 
@@ -417,7 +413,7 @@ public class XAccountManager extends XHook {
 
 		@Override
 		public void run(AccountManagerFuture<Boolean> future) {
-			mCallback.run(new XAccountManager.XFutureBoolean());
+			mCallback.run(new XFutureBoolean());
 		}
 	}
 }

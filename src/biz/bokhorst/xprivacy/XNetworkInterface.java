@@ -1,5 +1,9 @@
 package biz.bokhorst.xprivacy;
 
+import android.os.Binder;
+import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
@@ -9,9 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-
-import android.os.Binder;
-import android.util.Log;
 
 public class XNetworkInterface extends XHook {
 	private Methods mMethod;
@@ -126,5 +127,7 @@ public class XNetworkInterface extends XHook {
 					} else
 						Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
 		}
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 }

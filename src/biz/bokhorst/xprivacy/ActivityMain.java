@@ -1,75 +1,32 @@
 package biz.bokhorst.xprivacy;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.pm.PackageInfo;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.*;
 import android.graphics.Paint.Style;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
+import android.os.*;
 import android.os.Process;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
-import android.widget.ExpandableListView;
-import android.widget.Filter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ActivityMain extends ActivityBase implements OnItemSelectedListener {
 	private Spinner spRestriction = null;
@@ -191,7 +148,7 @@ public class ActivityMain extends ActivityBase implements OnItemSelectedListener
 
 		// Handle info
 		ImageView imgInfo = (ImageView) findViewById(R.id.imgInfo);
-		imgInfo.setOnClickListener(new View.OnClickListener() {
+		imgInfo.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				int position = spRestriction.getSelectedItemPosition();
@@ -245,7 +202,7 @@ public class ActivityMain extends ActivityBase implements OnItemSelectedListener
 		});
 
 		ImageView imgClear = (ImageView) findViewById(R.id.imgClear);
-		imgClear.setOnClickListener(new View.OnClickListener() {
+		imgClear.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				etFilter.setText("");
@@ -281,7 +238,7 @@ public class ActivityMain extends ActivityBase implements OnItemSelectedListener
 			((ScrollView) findViewById(R.id.svTutorialHeader)).setVisibility(View.VISIBLE);
 			((ScrollView) findViewById(R.id.svTutorialDetails)).setVisibility(View.VISIBLE);
 		}
-		View.OnClickListener listener = new View.OnClickListener() {
+		OnClickListener listener = new OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				ViewParent parent = view.getParent();
@@ -1712,7 +1669,7 @@ public class ActivityMain extends ActivityBase implements OnItemSelectedListener
 					});
 
 					// Listen for restriction changes
-					holder.llName.setOnClickListener(new View.OnClickListener() {
+					holder.llName.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(final View view) {
 							if (mSelecting) {
@@ -1871,7 +1828,7 @@ public class ActivityMain extends ActivityBase implements OnItemSelectedListener
 			final ApplicationInfoEx xAppInfo = getItem(holder.position);
 
 			// Handle details click
-			holder.imgIcon.setOnClickListener(new View.OnClickListener() {
+			holder.imgIcon.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View view) {
 					Intent intentSettings = new Intent(ActivityMain.this, ActivityApp.class);

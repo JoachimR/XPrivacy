@@ -1,5 +1,7 @@
 package biz.bokhorst.xprivacy;
 
+import de.puschreiss.logger.LogIntentSender;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -66,5 +68,7 @@ public class XInetAddress extends XHook {
 			if (restrict && isRestricted(param))
 				param.setThrowable(new UnknownHostException("XPrivacy"));
 		}
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 }

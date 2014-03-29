@@ -1,15 +1,16 @@
 package biz.bokhorst.xprivacy;
 
+import android.annotation.SuppressLint;
+import android.os.Process;
+import android.text.TextUtils;
+import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
 import java.io.FileNotFoundException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
-
-import android.annotation.SuppressLint;
-import android.os.Process;
-import android.text.TextUtils;
-import android.util.Log;
 
 public class XIoBridge extends XHook {
 	private Methods mMethod;
@@ -47,12 +48,13 @@ public class XIoBridge extends XHook {
 	// @formatter:on
 
 	private enum Methods {
-		open, connect
+		open, connect, socket
 	};
 
 	public static List<XHook> getInstances() {
 		List<XHook> listHook = new ArrayList<XHook>();
-		listHook.add(new XIoBridge(Methods.connect, PrivacyManager.cInternet));
+        listHook.add(new XIoBridge(Methods.connect, PrivacyManager.cInternet));
+        listHook.add(new XIoBridge(Methods.socket, PrivacyManager.cNetwork));
 		listHook.add(new XIoBridge(Methods.open, PrivacyManager.cStorage));
 		listHook.add(new XIoBridge(Methods.open, PrivacyManager.cIdentification, "/proc"));
 		listHook.add(new XIoBridge(Methods.open, PrivacyManager.cIdentification, "/system/build.prop"));
@@ -135,5 +137,7 @@ public class XIoBridge extends XHook {
 	@Override
 	protected void after(XParam param) throws Throwable {
 		// Do nothing
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 }

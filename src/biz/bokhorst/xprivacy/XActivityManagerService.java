@@ -1,11 +1,12 @@
 package biz.bokhorst.xprivacy;
 
+import android.os.Build;
+import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-
-import android.os.Build;
-import android.util.Log;
 
 public class XActivityManagerService extends XHook {
 	private Methods mMethod;
@@ -150,7 +151,9 @@ public class XActivityManagerService extends XHook {
 			mSleeping = false;
 			Util.log(this, Log.WARN, "Sleeping=" + mSleeping);
 		}
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName());
+    }
 
 	// Helper method
 

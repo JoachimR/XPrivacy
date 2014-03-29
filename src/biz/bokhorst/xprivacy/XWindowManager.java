@@ -1,13 +1,14 @@
 package biz.bokhorst.xprivacy;
 
+import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import de.puschreiss.logger.LogIntentSender;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-
-import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
 
 public class XWindowManager extends XHook {
 	private Methods mMethod;
@@ -88,5 +89,7 @@ public class XWindowManager extends XHook {
 	@Override
 	protected void after(XParam param) throws Throwable {
 		// Do nothing
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName());
+    }
 }

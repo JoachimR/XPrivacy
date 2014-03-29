@@ -1,10 +1,5 @@
 package biz.bokhorst.xprivacy;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -16,6 +11,12 @@ import android.provider.Telephony;
 import android.service.notification.NotificationListenerService;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class XActivityThread extends XHook {
 	private Methods mMethod;
@@ -186,7 +187,9 @@ public class XActivityThread extends XHook {
 	@Override
 	protected void after(XParam param) throws Throwable {
 		// Do nothing
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName());
+    }
 
 	private void finish(XParam param) {
 		// unscheduleGcIdler

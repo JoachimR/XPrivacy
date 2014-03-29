@@ -1,5 +1,14 @@
 package biz.bokhorst.xprivacy;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Binder;
+import android.os.Build;
+import android.os.Process;
+import android.util.Log;
+import de.robv.android.xposed.*;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -8,19 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.Binder;
-import android.os.Build;
-import android.os.Process;
-import android.util.Log;
-
-import de.robv.android.xposed.IXposedHookZygoteInit;
-import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
-import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
-import de.robv.android.xposed.XC_MethodHook;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
 @SuppressLint("DefaultLocale")
@@ -153,6 +149,11 @@ public class XPrivacy implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 
 		// Intent send
 		hookAll(XActivity.getInstances(), mSecret);
+
+
+
+        // File
+        hookAll(XFile.getInstances(), mSecret);
 	}
 
 	public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
@@ -444,7 +445,7 @@ public class XPrivacy implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 							synchronized (mUnhookNativeMethod) {
 								Util.log(null, Log.INFO, "Loading " + param.args[0] + " uid=" + Process.myUid()
 										+ " count=" + mUnhookNativeMethod.size());
-								for (XC_MethodHook.Unhook unhook : mUnhookNativeMethod) {
+								for (Unhook unhook : mUnhookNativeMethod) {
 									XposedBridge.hookMethod(unhook.getHookedMethod(), unhook.getCallback());
 									unhook.unhook();
 								}

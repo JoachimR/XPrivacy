@@ -1,10 +1,5 @@
 package biz.bokhorst.xprivacy;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.SupplicantState;
@@ -12,6 +7,12 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.os.Binder;
 import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class XWifiManager extends XHook {
 	private Methods mMethod;
@@ -150,5 +151,7 @@ public class XWifiManager extends XHook {
 
 		} else
 			Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 }

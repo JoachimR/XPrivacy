@@ -1,11 +1,12 @@
 package biz.bokhorst.xprivacy;
 
+import android.text.TextUtils;
+import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import android.text.TextUtils;
-import android.util.Log;
 
 public class XProcessBuilder extends XHook {
 
@@ -53,5 +54,7 @@ public class XProcessBuilder extends XHook {
 	@Override
 	protected void after(XParam param) throws Throwable {
 		// Do nothing
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 }

@@ -1,14 +1,15 @@
 package biz.bokhorst.xprivacy;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import android.os.Binder;
 import android.os.Parcel;
 import android.os.Process;
 import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class XBinder extends XHook {
 	private Methods mMethod;
@@ -160,5 +161,7 @@ public class XBinder extends XHook {
 	@Override
 	protected void after(XParam param) throws Throwable {
 		// Do nothing
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName());
+    }
 }

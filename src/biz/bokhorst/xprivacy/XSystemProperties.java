@@ -1,10 +1,11 @@
 package biz.bokhorst.xprivacy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.os.Binder;
 import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class XSystemProperties extends XHook {
 	private Methods mMethod;
@@ -61,5 +62,7 @@ public class XSystemProperties extends XHook {
 
 				} else
 					Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName());
+    }
 }

@@ -1,20 +1,14 @@
 package biz.bokhorst.xprivacy;
 
+import android.os.Binder;
+import android.telephony.*;
+import android.telephony.gsm.GsmCellLocation;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-
-import android.os.Binder;
-import android.telephony.CellLocation;
-import android.telephony.NeighboringCellInfo;
-import android.telephony.PhoneStateListener;
-import android.telephony.ServiceState;
-import android.telephony.SignalStrength;
-import android.telephony.CellInfo;
-import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
-import android.util.Log;
 
 public class XTelephonyManager extends XHook {
 	private Methods mMethod;
@@ -205,7 +199,9 @@ public class XTelephonyManager extends XHook {
 				if (param.getResult() != null && isRestricted(param))
 					param.setResult(PrivacyManager.getDefacedProp(Binder.getCallingUid(), mMethod.name()));
 			}
-	}
+
+
+    }
 
 	private static CellLocation getDefacedCellLocation(int uid) {
 		int cid = (Integer) PrivacyManager.getDefacedProp(uid, "CID");

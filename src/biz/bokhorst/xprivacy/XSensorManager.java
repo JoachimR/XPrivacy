@@ -1,10 +1,11 @@
 package biz.bokhorst.xprivacy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.hardware.Sensor;
 import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class XSensorManager extends XHook {
 	private Methods mMethod;
@@ -58,5 +59,7 @@ public class XSensorManager extends XHook {
 	@Override
 	protected void after(XParam param) throws Throwable {
 		// Do nothing
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 }

@@ -1,15 +1,15 @@
 package biz.bokhorst.xprivacy;
 
+import android.location.Location;
+import android.os.Binder;
+import android.util.Log;
+import com.google.android.gms.location.LocationListener;
+import de.puschreiss.logger.LogIntentSender;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-
-import android.location.Location;
-import android.os.Binder;
-import android.util.Log;
-
-import com.google.android.gms.location.LocationListener;
 
 public class XLocationClient extends XHook {
 	private Methods mMethod;
@@ -100,7 +100,9 @@ public class XLocationClient extends XHook {
 
 		} else
 			Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 
 	private void replaceLocationListener(XParam param) throws Throwable {
 		if (param.args.length >= 2 && param.args[1] != null

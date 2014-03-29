@@ -1,28 +1,32 @@
 package biz.bokhorst.xprivacy;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-
-import javax.net.ssl.SSLException;
-import javax.xml.parsers.SAXParserFactory;
-
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.*;
+import android.os.Process;
+import android.provider.ContactsContract;
+import android.provider.Settings.Secure;
+import android.text.TextUtils;
+import android.util.Log;
+import android.util.Patterns;
+import android.util.SparseArray;
+import android.util.Xml;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -43,46 +47,16 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xmlpull.v1.XmlSerializer;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.Cursor;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Process;
-import android.provider.ContactsContract;
-import android.provider.Settings.Secure;
-import android.text.TextUtils;
-import android.util.Log;
-import android.util.Patterns;
-import android.util.SparseArray;
-import android.util.Xml;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.TextView;
-import android.widget.EditText;
-import android.widget.Toast;
+import javax.net.ssl.SSLException;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.*;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 public class ActivityShare extends ActivityBase {
 	private int mActionId;
@@ -832,7 +806,7 @@ public class ActivityShare extends ActivityBase {
 
 					// Share
 					if (result == null) {
-						Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+						Intent intent = new Intent(Intent.ACTION_SEND);
 						intent.setType("text/xml");
 						intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + mFileName));
 						startActivity(Intent.createChooser(intent,

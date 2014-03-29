@@ -1,25 +1,5 @@
 package biz.bokhorst.xprivacy;
 
-import java.lang.reflect.Field;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.UUID;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -31,6 +11,12 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.util.Log;
 import android.util.SparseArray;
+
+import java.lang.reflect.Field;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.text.Collator;
+import java.util.*;
 
 public class PrivacyManager {
 	// This should correspond with restrict_<name> in strings.xml
@@ -120,7 +106,8 @@ public class PrivacyManager {
 	public final static String cSettingOnDemand = "OnDemand";
 	public final static String cSettingMigrated = "Migrated";
 	public final static String cSettingCid = "Cid";
-	public final static String cSettingLac = "Lac";
+    public final static String cSettingLac = "Lac";
+    public final static String cSettingAppLog = "AppLog";
 
 	// Special value names
 	public final static String cValueRandom = "#Random#";

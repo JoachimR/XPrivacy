@@ -1,14 +1,13 @@
 package biz.bokhorst.xprivacy;
 
-import biz.bokhorst.xprivacy.XHook;
+import android.bluetooth.BluetoothDevice;
+import android.os.Binder;
+import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import android.bluetooth.BluetoothDevice;
-import android.os.Binder;
-import android.util.Log;
 
 public class XBluetoothAdapter extends XHook {
 	private Methods mMethod;
@@ -55,5 +54,7 @@ public class XBluetoothAdapter extends XHook {
 
 		} else
 			Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 }

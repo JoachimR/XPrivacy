@@ -1,9 +1,5 @@
 package biz.bokhorst.xprivacy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.content.SyncAdapterType;
 import android.content.SyncInfo;
@@ -14,6 +10,11 @@ import android.os.Binder;
 import android.os.DeadObjectException;
 import android.text.TextUtils;
 import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class XContentResolver extends XHook {
 	private Methods mMethod;
@@ -105,19 +106,21 @@ public class XContentResolver extends XHook {
 				Util.bug(this, ex);
 			}
 
-		} else
-			Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
-	}
+        } else
+            Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
 
-	@SuppressLint("DefaultLocale")
-	private void handleUriBefore(XParam param) throws Throwable {
-		// Check URI
-		if (param.args.length > 1 && param.args[0] instanceof Uri) {
-			String uri = ((Uri) param.args[0]).toString().toLowerCase();
-			String[] projection = (param.args[1] instanceof String[] ? (String[]) param.args[1] : null);
-			Util.log(this, Log.INFO, "Before uri=" + uri);
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 
-			if (uri.startsWith("content://com.android.contacts/contacts/name_phone_or_email")) {
+    @SuppressLint("DefaultLocale")
+    private void handleUriBefore(XParam param) throws Throwable {
+        // Check URI
+        if (param.args.length > 1 && param.args[0] instanceof Uri) {
+            String uri = ((Uri) param.args[0]).toString().toLowerCase();
+            String[] projection = (param.args[1] instanceof String[] ? (String[]) param.args[1] : null);
+            Util.log(this, Log.INFO, "Before uri=" + uri);
+
+            if (uri.startsWith("content://com.android.contacts/contacts/name_phone_or_email")) {
 				// Do nothing
 
 			} else if (uri.startsWith("content://com.android.contacts/")

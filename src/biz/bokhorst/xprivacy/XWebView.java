@@ -1,11 +1,12 @@
 package biz.bokhorst.xprivacy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.os.Binder;
 import android.util.Log;
 import android.webkit.WebView;
+import de.puschreiss.logger.LogIntentSender;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class XWebView extends XHook {
 	private Methods mMethod;
@@ -100,5 +101,7 @@ public class XWebView extends XHook {
 
 		} else
 			Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 }

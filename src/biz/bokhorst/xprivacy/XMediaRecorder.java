@@ -1,9 +1,10 @@
 package biz.bokhorst.xprivacy;
 
+import android.util.Log;
+import de.puschreiss.logger.LogIntentSender;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import android.util.Log;
 
 public class XMediaRecorder extends XHook {
 	private Methods mMethod;
@@ -45,5 +46,7 @@ public class XMediaRecorder extends XHook {
 	@Override
 	protected void after(XParam param) throws Throwable {
 		// Do nothing
-	}
+
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
+    }
 }

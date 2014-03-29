@@ -31,7 +31,7 @@ public class PSetting implements Parcelable {
 		}
 	}
 
-	public static final Parcelable.Creator<PSetting> CREATOR = new Parcelable.Creator<PSetting>() {
+	public static final Creator<PSetting> CREATOR = new Creator<PSetting>() {
 		public PSetting createFromParcel(Parcel in) {
 			return new PSetting(in);
 		}

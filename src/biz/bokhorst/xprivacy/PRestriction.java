@@ -58,7 +58,7 @@ public class PRestriction implements Parcelable {
 		time = 0;
 	}
 
-	public static final Parcelable.Creator<PRestriction> CREATOR = new Parcelable.Creator<PRestriction>() {
+	public static final Creator<PRestriction> CREATOR = new Creator<PRestriction>() {
 		public PRestriction createFromParcel(Parcel in) {
 			return new PRestriction(in);
 		}
