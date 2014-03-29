@@ -1,3 +1,18 @@
+Log Mechanism For XPrivacy.
+==========================
+
+This is an extension of XPrivacy created by Jonas Pusch and Joachim Reiß (joareiss@gmail.com).
+
+
+Features
+-----
+* It can now send intent messages which carry information about recent method calls that
+have been recognized by XPrivacy.
+* Every application can be set to log on/off
+
+
+
+
 XPrivacy
 ========
 
