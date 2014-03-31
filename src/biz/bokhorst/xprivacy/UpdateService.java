@@ -1,9 +1,5 @@
 package biz.bokhorst.xprivacy;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -17,6 +13,10 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UpdateService extends Service {
 	public static String cAction = "Action";
@@ -52,15 +52,15 @@ public class UpdateService extends Service {
 			}
 
 			// Start foreground service
-			NotificationCompat.Builder builder = new NotificationCompat.Builder(UpdateService.this);
-			builder.setSmallIcon(R.drawable.ic_launcher);
-			builder.setContentTitle(getString(R.string.app_name));
-			builder.setContentText(getString(R.string.msg_service));
-			builder.setWhen(System.currentTimeMillis());
-			builder.setAutoCancel(false);
-			builder.setOngoing(true);
-			Notification notification = builder.build();
-			startForeground(Util.NOTIFY_SERVICE, notification);
+//			NotificationCompat.Builder builder = new NotificationCompat.Builder(UpdateService.this);
+//			builder.setSmallIcon(R.drawable.ic_launcher);
+//			builder.setContentTitle(getString(R.string.app_name));
+//			builder.setContentText(getString(R.string.msg_service));
+//			builder.setWhen(System.currentTimeMillis());
+//			builder.setAutoCancel(false);
+//			builder.setOngoing(true);
+//			Notification notification = builder.build();
+//			startForeground(Util.NOTIFY_SERVICE, notification);
 
 			// Start worker
 			mWorkerThread = new Thread(new Runnable() {

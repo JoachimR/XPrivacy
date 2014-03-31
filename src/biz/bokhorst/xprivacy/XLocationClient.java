@@ -4,7 +4,7 @@ import android.location.Location;
 import android.os.Binder;
 import android.util.Log;
 import com.google.android.gms.location.LocationListener;
-import de.puschreiss.logger.LogIntentSender;
+import de.pure.logger.LogIntentSender;
 
 import java.util.ArrayList;
 import java.util.List;

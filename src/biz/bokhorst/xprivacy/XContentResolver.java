@@ -10,7 +10,6 @@ import android.os.Binder;
 import android.os.DeadObjectException;
 import android.text.TextUtils;
 import android.util.Log;
-import de.puschreiss.logger.LogIntentSender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,7 +108,6 @@ public class XContentResolver extends XHook {
         } else
             Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
 
-        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
     }
 
     @SuppressLint("DefaultLocale")

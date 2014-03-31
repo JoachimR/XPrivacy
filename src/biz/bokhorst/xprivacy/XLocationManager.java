@@ -7,7 +7,7 @@ import android.location.LocationListener;
 import android.os.Binder;
 import android.os.Bundle;
 import android.util.Log;
-import de.puschreiss.logger.LogIntentSender;
+import de.pure.logger.LogIntentSender;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

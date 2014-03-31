@@ -4,7 +4,6 @@ import android.os.Binder;
 import android.os.Parcel;
 import android.os.Process;
 import android.util.Log;
-import de.puschreiss.logger.LogIntentSender;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -161,7 +160,5 @@ public class XBinder extends XHook {
 	@Override
 	protected void after(XParam param) throws Throwable {
 		// Do nothing
-
-        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName());
     }
 }

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Process;
 import android.util.Log;
-import de.puschreiss.logger.LogIntentSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +71,6 @@ public class XApplication extends XHook {
 		} else
 			Util.log(this, Log.WARN, "Unknown method=" + param.method.getName());
 
-        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
     }
 
 	public static void manage(Context context, int uid, String action) {

@@ -3,7 +3,7 @@ package biz.bokhorst.xprivacy;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import de.puschreiss.logger.LogIntentSender;
+import de.pure.logger.LogIntentSender;
 
 import java.util.ArrayList;
 import java.util.List;

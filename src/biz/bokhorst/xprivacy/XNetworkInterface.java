@@ -2,7 +2,7 @@ package biz.bokhorst.xprivacy;
 
 import android.os.Binder;
 import android.util.Log;
-import de.puschreiss.logger.LogIntentSender;
+import de.pure.logger.LogIntentSender;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;

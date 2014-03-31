@@ -1,6 +1,6 @@
 package biz.bokhorst.xprivacy;
 
-import de.puschreiss.logger.LogIntentSender;
+import de.pure.logger.LogIntentSender;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

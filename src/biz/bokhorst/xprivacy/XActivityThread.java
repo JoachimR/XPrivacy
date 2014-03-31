@@ -11,7 +11,6 @@ import android.provider.Telephony;
 import android.service.notification.NotificationListenerService;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import de.puschreiss.logger.LogIntentSender;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -188,7 +187,6 @@ public class XActivityThread extends XHook {
 	protected void after(XParam param) throws Throwable {
 		// Do nothing
 
-        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName());
     }
 
 	private void finish(XParam param) {

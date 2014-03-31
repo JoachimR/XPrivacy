@@ -3,7 +3,7 @@ package biz.bokhorst.xprivacy;
 import android.bluetooth.BluetoothDevice;
 import android.os.Binder;
 import android.util.Log;
-import de.puschreiss.logger.LogIntentSender;
+import de.pure.logger.LogIntentSender;
 
 import java.util.ArrayList;
 import java.util.HashSet;

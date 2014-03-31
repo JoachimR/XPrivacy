@@ -1,4 +1,4 @@
-package de.puschreiss.logger;
+package de.pure.logger;
 
 import android.app.AndroidAppHelper;
 import android.content.Context;
@@ -20,7 +20,7 @@ public class LogIntentSender {
      *                        and the results of the method hook
      * @param className       the class name of the method that is hooked
      * @param restrictionName the category of the restriction. See
-     * {@link biz.bokhorst.xprivacy.PrivacyManager}
+     *                        {@link biz.bokhorst.xprivacy.PrivacyManager}
      * @param methodName      the name of the method where the hook took place
      */
     public static void sendLog(XParam param, String className,
@@ -59,13 +59,21 @@ public class LogIntentSender {
 
             // check several things before logging
             if (!shouldThisAppBeLogged(applicationInfo)
-                    && !isRestrictionCritical(restrictionName)) {
+
+                    && !isRestrictionCritical(restrictionName)
+                // TODO what about isRestrictionCritical? should we really use it?
+
+                    ) {
+//                Log.d(Global.TAG, "This should not be logged: " +
+//                        param + className + restrictionName + methodName);
                 return;
             }
-
+//            Log.d(Global.TAG, "This should be logged: " +
+//                    applicationInfo.packageName + " " + className
+//                    + " " + restrictionName + " " + methodName);
 
             /*
-             *  Now send the log
+             *  Finally send the log intent
              */
             String content = prepareLogContent(className, methodName, param);
             Intent intent = new Intent();
@@ -99,7 +107,7 @@ public class LogIntentSender {
         }
 
         // append "RESULT:" and create some space before and after it
-        sb.append(String.format("%1$-10" + "s" + "%1$-10", "RESULT:"));
+        sb.append("          RESULT:          ");
 
         // Get whatever the hook of the method has put to the result
         // (can also be the untouched result from the OS)
@@ -119,16 +127,16 @@ public class LogIntentSender {
     }
 
     private static boolean isRestrictionCritical(String restrictionName) {
-        return restrictionName.equals("system")
-                || restrictionName.equals("shell")
-                || restrictionName.equals("network");
+        return "system".equals(restrictionName)
+                || "shell".equals(restrictionName)
+                || "network".equals(restrictionName);
     }
 
     private static boolean doesLoggingForThisAppMakeSense(ApplicationInfo applicationInfo) {
-        return !applicationInfo.packageName.equalsIgnoreCase("de.puschreiss.logger")
-                && !applicationInfo.packageName.equalsIgnoreCase("biz.bokhorst.xprivacy")
-                && !applicationInfo.packageName.equalsIgnoreCase("de.robv.android.xposed")
-                && !applicationInfo.packageName.startsWith("com.android");
+        return !"de.pure.logger".equalsIgnoreCase(applicationInfo.packageName)
+                && !"biz.bokhorst.xprivacy".equalsIgnoreCase(applicationInfo.packageName)
+                && !"de.robv.android.xposed".equalsIgnoreCase(applicationInfo.packageName)
+                && !"com.android".startsWith(applicationInfo.packageName);
     }
 
 }

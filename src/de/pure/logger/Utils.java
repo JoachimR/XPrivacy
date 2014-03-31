@@ -1,4 +1,4 @@
-package de.puschreiss.logger;
+package de.pure.logger;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;

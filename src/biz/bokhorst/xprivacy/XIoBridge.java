@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
-import de.puschreiss.logger.LogIntentSender;
+import de.pure.logger.LogIntentSender;
 
 import java.io.FileNotFoundException;
 import java.net.InetAddress;
