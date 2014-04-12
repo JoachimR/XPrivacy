@@ -4,6 +4,7 @@ import android.os.Binder;
 import android.telephony.*;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
+import de.pure.logger.LogIntentSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -200,7 +201,7 @@ public class XTelephonyManager extends XHook {
 					param.setResult(PrivacyManager.getDefacedProp(Binder.getCallingUid(), mMethod.name()));
 			}
 
-
+        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName()); // for logging
     }
 
 	private static CellLocation getDefacedCellLocation(int uid) {
