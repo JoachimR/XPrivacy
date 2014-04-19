@@ -1181,9 +1181,11 @@ public class ActivityMain extends ActivityBase implements OnItemSelectedListener
 
 			// Set data
 			if (hook.isDangerous())
-				holder.row.setBackgroundColor(getResources().getColor(getThemed(R.attr.color_dangerous)));
+				holder.row.setBackgroundColor(getResources().getColor(
+						getThemed(hook.isDangerousDefined() ? R.attr.color_dangerous : R.attr.color_dangerous_user)));
 			else
-				holder.row.setBackgroundColor(Color.TRANSPARENT);
+				holder.row.setBackgroundColor(hook.isDangerousDefined() ? getResources().getColor(
+						getThemed(R.attr.color_dangerous_off)) : Color.TRANSPARENT);
 			holder.tvRestriction.setText(hook.getName());
 			holder.imgCbRestrict.setEnabled(parentRestricted);
 			holder.imgCbRestrict.setImageBitmap(bmRestricted);
@@ -1200,9 +1202,12 @@ public class ActivityMain extends ActivityBase implements OnItemSelectedListener
 
 						// Change background color
 						if (hook.isDangerous())
-							holder.row.setBackgroundColor(getResources().getColor(getThemed(R.attr.color_dangerous)));
+							holder.row.setBackgroundColor(getResources().getColor(
+									getThemed(hook.isDangerousDefined() ? R.attr.color_dangerous
+											: R.attr.color_dangerous_user)));
 						else
-							holder.row.setBackgroundColor(Color.TRANSPARENT);
+							holder.row.setBackgroundColor(hook.isDangerousDefined() ? getResources().getColor(
+									getThemed(R.attr.color_dangerous_off)) : Color.TRANSPARENT);
 
 						return true;
 					}

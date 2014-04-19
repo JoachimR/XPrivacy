@@ -437,6 +437,8 @@ public class PrivacyManager {
 		// Apply template
 		List<PRestriction> listPRestriction = new ArrayList<PRestriction>();
 		for (String rRestrictionName : listRestriction) {
+			deleteRestrictions(uid, rRestrictionName, false);
+
 			// Parent
 			String parentValue = getSetting(userId, Meta.cTypeTemplate, rRestrictionName, Boolean.toString(!ondemand)
 					+ "+ask", false);
@@ -453,8 +455,9 @@ public class PrivacyManager {
 									+ (parentAsked ? "+asked" : "+ask"), false);
 					boolean restricted = value.contains("true");
 					boolean asked = value.contains("asked");
-					listPRestriction.add(new PRestriction(uid, rRestrictionName, hook.getName(), parentRestricted
-							&& restricted, parentAsked || asked || !ondemand));
+					if ((parentRestricted && !restricted) || (!parentAsked && asked))
+						listPRestriction.add(new PRestriction(uid, rRestrictionName, hook.getName(), parentRestricted
+								&& restricted, parentAsked || asked || !ondemand));
 				}
 		}
 		setRestrictionList(listPRestriction);

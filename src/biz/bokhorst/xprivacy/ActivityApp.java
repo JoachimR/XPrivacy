@@ -1,12 +1,27 @@
 package biz.bokhorst.xprivacy;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.NotificationManager;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -24,16 +39,37 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
-import android.view.*;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.widget.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
+import android.widget.CheckedTextView;
+import android.widget.CompoundButton;
+import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class ActivityApp extends ActivityBase {
 	private ApplicationInfoEx mAppInfo = null;
@@ -111,7 +147,7 @@ public class ActivityApp extends ActivityBase {
 
 		// Handle info click
 		ImageView imgInfo = (ImageView) findViewById(R.id.imgInfo);
-		imgInfo.setOnClickListener(new OnClickListener() {
+		imgInfo.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				// Packages can be selected on the web site
@@ -130,28 +166,12 @@ public class ActivityApp extends ActivityBase {
 			llInfo.setBackgroundColor(getResources().getColor(getThemed(R.attr.color_dangerous)));
 		}
 
-        // Display log state for app
-        Switch swAppLog = (Switch) findViewById(R.id.swAppLog);
-        swAppLog.setChecked(PrivacyManager.getSettingBool(
-                mAppInfo.getUid(), PrivacyManager.cSettingAppLog, false,
-                false));
-        swAppLog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                PrivacyManager.setSetting(mAppInfo.getUid(), PrivacyManager.cSettingAppLog,
-                        Boolean.toString(isChecked));
-            }
-        });
-
-
-
-
 		// Display app icon
 		final ImageView imgIcon = (ImageView) findViewById(R.id.imgIcon);
 		imgIcon.setImageDrawable(mAppInfo.getIcon(this));
 
 		// Handle icon click
-		imgIcon.setOnClickListener(new OnClickListener() {
+		imgIcon.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				openContextMenu(imgIcon);
@@ -178,7 +198,7 @@ public class ActivityApp extends ActivityBase {
 					false, false);
 			imgCbOnDemand.setImageBitmap(ondemand ? getOnDemandCheckBox() : getOffCheckBox());
 
-			imgCbOnDemand.setOnClickListener(new OnClickListener() {
+			imgCbOnDemand.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
 					boolean ondemand = !PrivacyManager.getSettingBool(-mAppInfo.getUid(),
@@ -248,7 +268,7 @@ public class ActivityApp extends ActivityBase {
 			((ScrollView) findViewById(R.id.svTutorialHeader)).setVisibility(View.VISIBLE);
 			((ScrollView) findViewById(R.id.svTutorialDetails)).setVisibility(View.VISIBLE);
 		}
-		OnClickListener listener = new OnClickListener() {
+		View.OnClickListener listener = new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				ViewParent parent = view.getParent();
@@ -1007,7 +1027,7 @@ public class ActivityApp extends ActivityBase {
 
 		@Override
 		public long getGroupId(int groupPosition) {
-			return groupPosition;
+			return groupPosition * 1000;
 		}
 
 		private class GroupViewHolder {
@@ -1090,7 +1110,7 @@ public class ActivityApp extends ActivityBase {
 						holder.imgCbAsk.setVisibility(View.GONE);
 
 					// Listen for restriction changes
-					holder.llName.setOnClickListener(new OnClickListener() {
+					holder.llName.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View view) {
 							holder.llName.setEnabled(false);
@@ -1131,7 +1151,7 @@ public class ActivityApp extends ActivityBase {
 
 					// Listen for ask changes
 					if (ondemand)
-						holder.imgCbAsk.setOnClickListener(new OnClickListener() {
+						holder.imgCbAsk.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View view) {
 								holder.imgCbAsk.setVisibility(View.GONE);
@@ -1194,7 +1214,7 @@ public class ActivityApp extends ActivityBase {
 			holder.imgGranted.setVisibility(View.INVISIBLE);
 
 			// Handle info
-			holder.imgInfo.setOnClickListener(new OnClickListener() {
+			holder.imgInfo.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
 					Util.viewUri(ActivityApp.this, Uri.parse(ActivityMain.cXUrl + "#" + restrictionName));
@@ -1244,7 +1264,7 @@ public class ActivityApp extends ActivityBase {
 
 		@Override
 		public long getChildId(int groupPosition, int childPosition) {
-			return childPosition;
+			return groupPosition * 1000 + childPosition;
 		}
 
 		@Override
@@ -1355,43 +1375,46 @@ public class ActivityApp extends ActivityBase {
 						holder.imgCbMethodAsk.setVisibility(View.GONE);
 
 					// Listen for restriction changes
-					holder.llMethodName.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View view) {
-							holder.llMethodName.setEnabled(false);
-							holder.imgCbMethodRestricted.setVisibility(View.GONE);
-							holder.pbRunning.setVisibility(View.VISIBLE);
+					if (parent.restricted)
+						holder.llMethodName.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View view) {
+								holder.llMethodName.setEnabled(false);
+								holder.imgCbMethodRestricted.setVisibility(View.GONE);
+								holder.pbRunning.setVisibility(View.VISIBLE);
 
-							new AsyncTask<Object, Object, Object>() {
-								@Override
-								protected Object doInBackground(Object... arg0) {
-									// Change restriction
-									rstate.toggleRestriction();
-									return null;
-								}
+								new AsyncTask<Object, Object, Object>() {
+									@Override
+									protected Object doInBackground(Object... arg0) {
+										// Change restriction
+										rstate.toggleRestriction();
+										return null;
+									}
 
-								@Override
-								protected void onPostExecute(Object result) {
-									// Refresh display
-									// Needed to update parent
-									notifyDataSetChanged();
+									@Override
+									protected void onPostExecute(Object result) {
+										// Refresh display
+										// Needed to update parent
+										notifyDataSetChanged();
 
-									// Notify restart
-									if (md.isRestartRequired())
-										Toast.makeText(ActivityApp.this, getString(R.string.msg_restart),
-												Toast.LENGTH_SHORT).show();
+										// Notify restart
+										if (md.isRestartRequired())
+											Toast.makeText(ActivityApp.this, getString(R.string.msg_restart),
+													Toast.LENGTH_SHORT).show();
 
-									holder.pbRunning.setVisibility(View.GONE);
-									holder.imgCbMethodRestricted.setVisibility(View.VISIBLE);
-									holder.llMethodName.setEnabled(true);
-								}
-							}.executeOnExecutor(mExecutor);
-						}
-					});
+										holder.pbRunning.setVisibility(View.GONE);
+										holder.imgCbMethodRestricted.setVisibility(View.VISIBLE);
+										holder.llMethodName.setEnabled(true);
+									}
+								}.executeOnExecutor(mExecutor);
+							}
+						});
+					else
+						holder.llMethodName.setClickable(false);
 
 					// Listen for ask changes
 					if (ondemand)
-						holder.imgCbMethodAsk.setOnClickListener(new OnClickListener() {
+						holder.imgCbMethodAsk.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View view) {
 								holder.imgCbMethodAsk.setVisibility(View.GONE);
@@ -1463,7 +1486,7 @@ public class ActivityApp extends ActivityBase {
 				holder.imgInfo.setVisibility(View.GONE);
 			else {
 				holder.imgInfo.setVisibility(View.VISIBLE);
-				holder.imgInfo.setOnClickListener(new OnClickListener() {
+				holder.imgInfo.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
 						LayoutInflater inflator = LayoutInflater.from(ActivityApp.this);
@@ -1495,7 +1518,7 @@ public class ActivityApp extends ActivityBase {
 						popup.setWidth(90 * parent.getWidth() / 100);
 
 						Button btnOk = (Button) layout.findViewById(R.id.btnOk);
-						btnOk.setOnClickListener(new OnClickListener() {
+						btnOk.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View view) {
 								if (popup.isShowing())
@@ -1509,7 +1532,8 @@ public class ActivityApp extends ActivityBase {
 			}
 
 			// Display restriction
-			holder.tvMethodName.setClickable(false);
+			holder.llMethodName.setClickable(false);
+			holder.imgCbMethodRestricted.setVisibility(View.INVISIBLE);
 
 			// Async update
 			new ChildHolderTask(groupPosition, childPosition, holder, restrictionName).executeOnExecutor(mExecutor,

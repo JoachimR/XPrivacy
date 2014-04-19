@@ -17,6 +17,26 @@ Changelog
 
 [Open issues](https://github.com/M66B/XPrivacy/issues?state=open)
 
+**Version 2.0.19 STABLE**
+
+* Fixed handling of *removeActivityUpdates*
+
+**Version 2.0.18 STABLE**
+
+* Updated Italian translation
+
+**Version 2.0.17 BETA**
+
+* Fixed restricting activity recognition (category location)
+* Display disabled standard dangerous functions with a faint background color
+
+**Version 2.0.16 BETA**
+
+* Fixed applying template in relation to default restrictions ([issue](/../../issues/1566))
+* Prefix export file name with date ([issue](/../../issues/1625))
+* Display user defined dangerous functions orangish ([issue](/../../issues/1626))
+	* Long press on a function in the template to define dangerous functions
+
 **Version 2.0.15 BETA**
 
 * On demand restricting control in application list ([issue](/../../issues/1615))
