@@ -354,9 +354,9 @@ Compatibility
 XPrivacy has been tested with Android version 4.0.3 - 4.4.2 (ICS, JellyBean, KitKat)
 and is reported to work with most Android variants, including stock ROMs.
 
-**XPrivacy is not compatible with LBE Security Master** ([issue](https://github.com/M66B/XPrivacy/issues/1231))
+**XPrivacy is incompatible with LBE Security Master** ([issue](https://github.com/M66B/XPrivacy/issues/1231))
 
-XPrivacy seems not to be compatible with [OLYMPUS Image Share](https://play.google.com/store/apps/details?id=jp.olympusimaging.oishare)
+XPrivacy seems to be incompatible with [OLYMPUS Image Share](https://play.google.com/store/apps/details?id=jp.olympusimaging.oishare)
 for unknown reasons ([issue](https://github.com/M66B/XPrivacy/issues/1607)).
 
 XPrivacy seems to cause camera lag on a Samsung Galaxy Note II ([issue](https://github.com/M66B/XPrivacy/issues/715))
@@ -370,7 +370,6 @@ Installation may seem lengthy, but you can actually do it quickly:
 
 1. Requirements:
 	* Android version 4.0.3 - 4.4.2 (ICS, JellyBean, KitKat); check with *System Settings* > *About phone* > *Android version*
-	* Custom recovery ([CWM](http://forum.xda-developers.com/wiki/ClockworkMod_Recovery), [TWRP](http://teamw.in/project/twrp2) or similar)
 	* Read about [compatibility](https://github.com/M66B/XPrivacy#compatibility) before installing
 1. **Make a backup**
 1. If you haven't already, root your device; the rooting procedure depends on your device's brand and model.
@@ -694,7 +693,7 @@ No, because it's too difficult to implement something like XPrivacy on these OS'
 * network type (mobile, Wi-Fi, etc.)
 * synchronization state
 * screen locking
-* display settings
+* display settings (DPI, resolution, etc)
 * Wi-Fi settings
 * Bluetooth settings
 * shortcuts
@@ -794,6 +793,11 @@ The same applies to the IMEI number, additionally complicated by legal issues in
 	* You will never be asked whether to restrict dangerous functions, except for functions with a white/black list
 	* Setting any category to restricted will not restrict any of its dangerous functions
 * The default after dialog timeout is taken from the current restriction settings
+* There are four possiblities for the restriction / on demand checkboxes:
+	* [ ] [ ] You will not receive an on demand popup, the permission will always be allowed
+	* [ ] [?] You will receive an on demand popup, if this times out or the screen is locked the permission will 		be allowed once
+	* [x] [?] You will receive an on demand popup, if this times out or the screen is locked the permission will 		be denied once
+	* [x] [ ] You will not receive an on demand popup, the permission will always be denied
 
 <a name="FAQ35"></a>
 **(35) Do I need the pro enabler to use the pro license?**
@@ -944,6 +948,8 @@ If you have a feature request, please [create an issue](https://github.com/M66B/
 
 New features are only implemented when requested on GitHub with a detailed description of the feature and only if there are ten +1's.
 See [here](http://forum.xda-developers.com/showpost.php?p=51574315&postcount=8776) for some more information.
+
+Please [read this](http://forum.xda-developers.com/showpost.php?p=52644313&postcount=9241) before voting.
 
 **One feature request per issue please!**
 

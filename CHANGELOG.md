@@ -17,6 +17,14 @@ Changelog
 
 [Open issues](https://github.com/M66B/XPrivacy/issues?state=open)
 
+**Version 2.0.22 STABLE**
+
+* Fixed incompatibility with Xposed 2.6 beta 1 ([issue](/../../issues/1659))
+
+**Version 2.0.21 STABLE**
+
+* Fixed incompatibility with Xposed 2.6 beta 1 ([issue](/../../issues/1659))
+
 **Version 2.0.20 STABLE**
 
 * Updated French translation

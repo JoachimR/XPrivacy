@@ -1,11 +1,12 @@
 package biz.bokhorst.xprivacy;
 
-import android.os.Build;
-import android.util.Log;
-
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+
+import android.os.Build;
+import android.util.Log;
 
 public class XActivityManagerService extends XHook {
 	private Methods mMethod;
@@ -160,7 +161,9 @@ public class XActivityManagerService extends XHook {
 		try {
 			Class<?> pr = Class.forName("com.android.server.am.ProcessRecord");
 			if (param.args.length > 0 && param.args[0] != null && param.args[0].getClass().equals(pr)) {
-				uid = (Integer) pr.getDeclaredField("uid").get(param.args[0]);
+				Field fUid = pr.getDeclaredField("uid");
+				fUid.setAccessible(true);
+				uid = (Integer) fUid.get(param.args[0]);
 			}
 		} catch (ClassNotFoundException ignored) {
 		} catch (NoSuchFieldException ignored) {

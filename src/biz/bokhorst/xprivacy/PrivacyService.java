@@ -1,5 +1,23 @@
 package biz.bokhorst.xprivacy;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -14,8 +32,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDoneException;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteStatement;
-import android.os.*;
+import android.os.Binder;
+import android.os.Build;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
 import android.os.Process;
+import android.os.RemoteException;
+import android.os.StrictMode;
 import android.os.StrictMode.ThreadPolicy;
 import android.text.Html;
 import android.text.TextUtils;
@@ -50,7 +75,7 @@ public class PrivacyService {
 	private static final String cTableUsage = "usage";
 	private static final String cTableSetting = "setting";
 
-	private static final int cCurrentVersion = 327;
+	private static final int cCurrentVersion = 329;
 	private static final String cServiceName = "xprivacy305";
 
 	// TODO: define column names
@@ -1050,7 +1075,7 @@ public class PrivacyService {
 		public List<PSetting> getSettingList(int uid) throws RemoteException {
 			List<PSetting> listSetting = new ArrayList<PSetting>();
 			try {
-				//enforcePermission(uid);
+				enforcePermission(uid);
 				SQLiteDatabase db = getDb();
 				if (db == null)
 					return listSetting;
@@ -1218,82 +1243,69 @@ public class PrivacyService {
 				int userId = Util.getUserId(restriction.uid);
 
 				// Without handler nothing can be done
-                if (mHandler == null) {
-                    Log.d("AAA", "mHandler == null");
-                    return false;
-                }
-                // Check for exceptions
-                if (hook != null && !hook.canOnDemand()) {
-                    Log.d("AAA", "hook != null && !hook.canOnDemand()" +(hook != null) +"," + !hook.canOnDemand());
-                    return false;
-                }
+				if (mHandler == null)
+					return false;
 
-//                // Check if enabled
-//                if (!getSettingBool(userId, PrivacyManager.cSettingOnDemand, true)) {
-//                    Log.d("AAA", "!getSettingBool(userId, PrivacyManager.cSettingOnDemand, true)"+userId+","+ PrivacyManager.cSettingOnDemand+","+ true);
-//                    return false;
-//                }
-//                if (!getSettingBool(restriction.uid, PrivacyManager.cSettingOnDemand, false)) {
-//                    Log.d("AAA", "!getSettingBool(restriction.uid, PrivacyManager.cSettingOnDemand, false) == "+restriction.uid+","+ PrivacyManager.cSettingOnDemand+","+ false);
-//                    return false;
-//                }
+				// Check for exceptions
+				if (hook != null && !hook.canOnDemand())
+					return false;
 
-                // Skip dangerous methods
-                final boolean dangerous = getSettingBool(userId, PrivacyManager.cSettingDangerous, false);
-                if (!dangerous && hook != null && hook.isDangerous() && hook.whitelist() == null) {
-                    Log.d("AAA", "!dangerous && hook != null && hook.isDangerous() && hook.whitelist() == null"+(!dangerous && hook != null) + (hook.isDangerous() && hook.whitelist() == null));
-                    return false;
-                }
+				// Check if enabled
+				if (!getSettingBool(userId, PrivacyManager.cSettingOnDemand, true))
+					return false;
+				if (!getSettingBool(restriction.uid, PrivacyManager.cSettingOnDemand, false))
+					return false;
 
-                // Get am context
-                final Context context = getContext();
-                if (context == null)
-                    return false;
+				// Skip dangerous methods
+				final boolean dangerous = getSettingBool(userId, PrivacyManager.cSettingDangerous, false);
+				if (!dangerous && hook != null && hook.isDangerous() && hook.whitelist() == null)
+					return false;
 
-                long token = 0;
-                try {
-                    token = Binder.clearCallingIdentity();
+				// Get am context
+				final Context context = getContext();
+				if (context == null)
+					return false;
 
-                    // Get application info
-                    final ApplicationInfoEx appInfo = new ApplicationInfoEx(context, restriction.uid);
+				long token = 0;
+				try {
+					token = Binder.clearCallingIdentity();
 
-                    // Check if system application
-                    if (!dangerous && appInfo.isSystem())
-                        return false;
+					// Get application info
+					final ApplicationInfoEx appInfo = new ApplicationInfoEx(context, restriction.uid);
 
-                    // Check if activity manager agrees
+					// Check if system application
+					if (!dangerous && appInfo.isSystem())
+						return false;
+
+					// Check if activity manager agrees
 					if (!XActivityManagerService.canOnDemand())
 						return false;
 
-                    // Go ask
-                    Util.log(null, Log.WARN, "On demand " + restriction);
-                    mOndemandSemaphore.acquireUninterruptibly();
-                    try {
-                        // Check if activity manager still agrees
-                        if (!XActivityManagerService.canOnDemand()) {
-                            Log.d("AAA", "!XActivityManagerService.canOnDemand()"+!XActivityManagerService.canOnDemand());
-                            return false;
-                        }
+					// Go ask
+					Util.log(null, Log.WARN, "On demand " + restriction);
+					mOndemandSemaphore.acquireUninterruptibly();
+					try {
+						// Check if activity manager still agrees
+						if (!XActivityManagerService.canOnDemand())
+							return false;
 
-                        Util.log(null, Log.WARN, "On demanding " + restriction);
+						Util.log(null, Log.WARN, "On demanding " + restriction);
 
-                        // Check if not asked before
-                        CRestriction key = new CRestriction(restriction, restriction.extra);
-//                        synchronized (mRestrictionCache) {
-//							if (mRestrictionCache.containsKey(key))
-//								if (mRestrictionCache.get(key).asked) {
-//									Util.log(null, Log.WARN, "Already asked " + restriction);
-//
-//                                    Log.d("AAA", "!XActivityManagerService.canOnDemand()");
-//									return false;
-//								}
-//						}
-//						synchronized (mAskedOnceCache) {
-//							if (mAskedOnceCache.containsKey(key) && !mAskedOnceCache.get(key).isExpired()) {
-//								Util.log(null, Log.WARN, "Already asked once " + restriction);
-//								return false;
-//							}
-//						}
+						// Check if not asked before
+						CRestriction key = new CRestriction(restriction, restriction.extra);
+						synchronized (mRestrictionCache) {
+							if (mRestrictionCache.containsKey(key))
+								if (mRestrictionCache.get(key).asked) {
+									Util.log(null, Log.WARN, "Already asked " + restriction);
+									return false;
+								}
+						}
+						synchronized (mAskedOnceCache) {
+							if (mAskedOnceCache.containsKey(key) && !mAskedOnceCache.get(key).isExpired()) {
+								Util.log(null, Log.WARN, "Already asked once " + restriction);
+								return false;
+							}
+						}
 
 						if (restriction.extra != null && hook != null && hook.whitelist() != null) {
 							CSetting skey = new CSetting(restriction.uid, hook.whitelist(), restriction.extra);
@@ -1301,13 +1313,13 @@ public class PrivacyService {
 							String xextra = getXExtra(restriction, hook);
 							if (xextra != null)
 								xkey = new CSetting(restriction.uid, hook.whitelist(), xextra);
-//							synchronized (mSettingCache) {
-//								if (mSettingCache.containsKey(skey)
-//										|| (xkey != null && mSettingCache.containsKey(xkey))) {
-//									Util.log(null, Log.WARN, "Already asked " + skey);
-//									return false;
-//								}
-//							}
+							synchronized (mSettingCache) {
+								if (mSettingCache.containsKey(skey)
+										|| (xkey != null && mSettingCache.containsKey(xkey))) {
+									Util.log(null, Log.WARN, "Already asked " + skey);
+									return false;
+								}
+							}
 						}
 
 						final AlertDialogHolder holder = new AlertDialogHolder();
@@ -1687,13 +1699,13 @@ public class PrivacyService {
 		}
 
 		private void enforcePermission(int uid) {
-//			if (uid >= 0)
-//				if (Util.getUserId(uid) != Util.getUserId(Binder.getCallingUid()))
-//					throw new SecurityException("uid=" + uid + " calling=" + Binder.getCallingUid());
-//
-//			int callingUid = Util.getAppId(Binder.getCallingUid());
-//			if (callingUid != getXUid() && callingUid != Process.SYSTEM_UID)
-//				throw new SecurityException("xuid=" + mXUid + " calling=" + Binder.getCallingUid());
+			if (uid >= 0)
+				if (Util.getUserId(uid) != Util.getUserId(Binder.getCallingUid()))
+					throw new SecurityException("uid=" + uid + " calling=" + Binder.getCallingUid());
+
+			int callingUid = Util.getAppId(Binder.getCallingUid());
+			if (callingUid != getXUid() && callingUid != Process.SYSTEM_UID)
+				throw new SecurityException("xuid=" + mXUid + " calling=" + Binder.getCallingUid());
 		}
 
 		private Context getContext() {
@@ -1704,7 +1716,9 @@ public class PrivacyService {
 				Object am = cam.getMethod("self").invoke(null);
 				if (am == null)
 					return null;
-				return (Context) cam.getDeclaredField("mContext").get(am);
+				Field mContext = cam.getDeclaredField("mContext");
+				mContext.setAccessible(true);
+				return (Context) mContext.get(am);
 			} catch (Throwable ex) {
 				Util.bug(null, ex);
 				return null;
