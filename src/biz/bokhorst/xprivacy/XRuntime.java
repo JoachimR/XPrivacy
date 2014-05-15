@@ -38,7 +38,7 @@ public class XRuntime extends XHook {
 	// libcore/luni/src/main/java/java/lang/Runtime.java
 	// http://developer.android.com/reference/java/lang/Runtime.html
 
-	private enum Methods {
+	public enum Methods {
 		exec, load, loadLibrary
 	};
 

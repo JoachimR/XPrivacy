@@ -2,6 +2,7 @@ package biz.bokhorst.xprivacy;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.os.Process;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
+import de.reiss.xprivacynative.util.ExportAssets;
 
 @SuppressLint("Registered")
 public class ActivityBase extends Activity {
@@ -22,14 +24,16 @@ public class ActivityBase extends Activity {
 	private Bitmap[] mCheck = null;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		if (PrivacyService.checkClient()) {
-			// Set theme
-			int userId = Util.getUserId(Process.myUid());
-			String themeName = PrivacyManager.getSetting(userId, PrivacyManager.cSettingTheme, "", false);
-			mThemeId = (themeName.equals("Dark") ? R.style.CustomTheme : R.style.CustomTheme_Light);
+        copyObjdumpBinary();
+
+        if (PrivacyService.checkClient()) {
+            // Set theme
+            int userId = Util.getUserId(Process.myUid());
+            String themeName = PrivacyManager.getSetting(userId, PrivacyManager.cSettingTheme, "", false);
+            mThemeId = (themeName.equals("Dark") ? R.style.CustomTheme : R.style.CustomTheme_Light);
 			setTheme(mThemeId);
 		} else {
 			// Privacy client now available
@@ -56,7 +60,20 @@ public class ActivityBase extends Activity {
 		}
 	}
 
-	protected Bitmap getOffCheckBox() {
+    /**
+     * copy objdump to a folder where one can execute it from the shell
+     */
+    private void copyObjdumpBinary() {
+        final Context ctx = this;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ExportAssets.putToInternalTmpDir(ctx, "objdump");
+            }
+        }).start();
+    }
+
+    protected Bitmap getOffCheckBox() {
 		if (mCheck == null)
 			buildCheckBoxes();
 		return mCheck[0];

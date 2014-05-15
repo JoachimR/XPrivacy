@@ -17,6 +17,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.os.*;
 import android.os.Process;
 import android.os.StrictMode.ThreadPolicy;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -24,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.*;
+import de.reiss.xprivacynative.ReadLibraryDependencies;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1216,69 +1218,82 @@ public class PrivacyService {
 				int userId = Util.getUserId(restriction.uid);
 
 				// Without handler nothing can be done
-				if (mHandler == null)
-					return false;
+                if (mHandler == null) {
+                    Log.d("AAA", "mHandler == null");
+                    return false;
+                }
+                // Check for exceptions
+                if (hook != null && !hook.canOnDemand()) {
+                    Log.d("AAA", "hook != null && !hook.canOnDemand()" +(hook != null) +"," + !hook.canOnDemand());
+                    return false;
+                }
 
-				// Check for exceptions
-				if (hook != null && !hook.canOnDemand())
-					return false;
+//                // Check if enabled
+//                if (!getSettingBool(userId, PrivacyManager.cSettingOnDemand, true)) {
+//                    Log.d("AAA", "!getSettingBool(userId, PrivacyManager.cSettingOnDemand, true)"+userId+","+ PrivacyManager.cSettingOnDemand+","+ true);
+//                    return false;
+//                }
+//                if (!getSettingBool(restriction.uid, PrivacyManager.cSettingOnDemand, false)) {
+//                    Log.d("AAA", "!getSettingBool(restriction.uid, PrivacyManager.cSettingOnDemand, false) == "+restriction.uid+","+ PrivacyManager.cSettingOnDemand+","+ false);
+//                    return false;
+//                }
 
-				// Check if enabled
-				if (!getSettingBool(userId, PrivacyManager.cSettingOnDemand, true))
-					return false;
-				if (!getSettingBool(restriction.uid, PrivacyManager.cSettingOnDemand, false))
-					return false;
+                // Skip dangerous methods
+                final boolean dangerous = getSettingBool(userId, PrivacyManager.cSettingDangerous, false);
+                if (!dangerous && hook != null && hook.isDangerous() && hook.whitelist() == null) {
+                    Log.d("AAA", "!dangerous && hook != null && hook.isDangerous() && hook.whitelist() == null"+(!dangerous && hook != null) + (hook.isDangerous() && hook.whitelist() == null));
+                    return false;
+                }
 
-				// Skip dangerous methods
-				final boolean dangerous = getSettingBool(userId, PrivacyManager.cSettingDangerous, false);
-				if (!dangerous && hook != null && hook.isDangerous() && hook.whitelist() == null)
-					return false;
+                // Get am context
+                final Context context = getContext();
+                if (context == null)
+                    return false;
 
-				// Get am context
-				final Context context = getContext();
-				if (context == null)
-					return false;
+                long token = 0;
+                try {
+                    token = Binder.clearCallingIdentity();
 
-				long token = 0;
-				try {
-					token = Binder.clearCallingIdentity();
+                    // Get application info
+                    final ApplicationInfoEx appInfo = new ApplicationInfoEx(context, restriction.uid);
 
-					// Get application info
-					final ApplicationInfoEx appInfo = new ApplicationInfoEx(context, restriction.uid);
+                    // Check if system application
+                    if (!dangerous && appInfo.isSystem())
+                        return false;
 
-					// Check if system application
-					if (!dangerous && appInfo.isSystem())
-						return false;
-
-					// Check if activity manager agrees
+                    // Check if activity manager agrees
 					if (!XActivityManagerService.canOnDemand())
 						return false;
 
-					// Go ask
-					Util.log(null, Log.WARN, "On demand " + restriction);
-					mOndemandSemaphore.acquireUninterruptibly();
-					try {
-						// Check if activity manager still agrees
-						if (!XActivityManagerService.canOnDemand())
-							return false;
+                    // Go ask
+                    Util.log(null, Log.WARN, "On demand " + restriction);
+                    mOndemandSemaphore.acquireUninterruptibly();
+                    try {
+                        // Check if activity manager still agrees
+                        if (!XActivityManagerService.canOnDemand()) {
+                            Log.d("AAA", "!XActivityManagerService.canOnDemand()"+!XActivityManagerService.canOnDemand());
+                            return false;
+                        }
 
-						Util.log(null, Log.WARN, "On demanding " + restriction);
+                        Util.log(null, Log.WARN, "On demanding " + restriction);
 
-						// Check if not asked before
-						CRestriction key = new CRestriction(restriction, restriction.extra);
-						synchronized (mRestrictionCache) {
-							if (mRestrictionCache.containsKey(key))
-								if (mRestrictionCache.get(key).asked) {
-									Util.log(null, Log.WARN, "Already asked " + restriction);
-									return false;
-								}
-						}
-						synchronized (mAskedOnceCache) {
-							if (mAskedOnceCache.containsKey(key) && !mAskedOnceCache.get(key).isExpired()) {
-								Util.log(null, Log.WARN, "Already asked once " + restriction);
-								return false;
-							}
-						}
+                        // Check if not asked before
+                        CRestriction key = new CRestriction(restriction, restriction.extra);
+//                        synchronized (mRestrictionCache) {
+//							if (mRestrictionCache.containsKey(key))
+//								if (mRestrictionCache.get(key).asked) {
+//									Util.log(null, Log.WARN, "Already asked " + restriction);
+//
+//                                    Log.d("AAA", "!XActivityManagerService.canOnDemand()");
+//									return false;
+//								}
+//						}
+//						synchronized (mAskedOnceCache) {
+//							if (mAskedOnceCache.containsKey(key) && !mAskedOnceCache.get(key).isExpired()) {
+//								Util.log(null, Log.WARN, "Already asked once " + restriction);
+//								return false;
+//							}
+//						}
 
 						if (restriction.extra != null && hook != null && hook.whitelist() != null) {
 							CSetting skey = new CSetting(restriction.uid, hook.whitelist(), restriction.extra);
@@ -1286,13 +1301,13 @@ public class PrivacyService {
 							String xextra = getXExtra(restriction, hook);
 							if (xextra != null)
 								xkey = new CSetting(restriction.uid, hook.whitelist(), xextra);
-							synchronized (mSettingCache) {
-								if (mSettingCache.containsKey(skey)
-										|| (xkey != null && mSettingCache.containsKey(xkey))) {
-									Util.log(null, Log.WARN, "Already asked " + skey);
-									return false;
-								}
-							}
+//							synchronized (mSettingCache) {
+//								if (mSettingCache.containsKey(skey)
+//										|| (xkey != null && mSettingCache.containsKey(xkey))) {
+//									Util.log(null, Log.WARN, "Already asked " + skey);
+//									return false;
+//								}
+//							}
 						}
 
 						final AlertDialogHolder holder = new AlertDialogHolder();
@@ -1409,6 +1424,22 @@ public class PrivacyService {
 				rowParameters.setVisibility(View.GONE);
 			else
 				tvParameters.setText(restriction.extra);
+
+            // in case of XRuntime.Methods.loadLibrary, show what is included by the library
+            if (restriction.methodName.equals(XRuntime.Methods.loadLibrary.toString())) {
+                TextView tvExtraComment = (TextView) view.findViewById(R.id.tvExtraComment);
+                tvExtraComment.setText("Libraries included in '" + restriction.extra + "':\n");
+
+                String res = ReadLibraryDependencies.perform(context, appInfo.getAppInfos(),
+                        restriction.extra);
+
+                String content = "Libraries included in '" + restriction.extra + "':\n"+
+                        res.replaceAll("libOpenSLES.so","<b>libOpenSLES.so " +
+                                "--> WITH THIS LIBRARY XPRIVACY WILL " +
+                                "NOT RECOGNIZE AUDIO RECORDING</b>" );
+
+                tvExtraComment.setText(Html.fromHtml(content));
+            }
 
 			cbCategory.setChecked(mSelectCategory);
 			cbOnce.setChecked(mSelectOnce);
@@ -1656,13 +1687,13 @@ public class PrivacyService {
 		}
 
 		private void enforcePermission(int uid) {
-			if (uid >= 0)
-				if (Util.getUserId(uid) != Util.getUserId(Binder.getCallingUid()))
-					throw new SecurityException("uid=" + uid + " calling=" + Binder.getCallingUid());
-
-			int callingUid = Util.getAppId(Binder.getCallingUid());
-			if (callingUid != getXUid() && callingUid != Process.SYSTEM_UID)
-				throw new SecurityException("xuid=" + mXUid + " calling=" + Binder.getCallingUid());
+//			if (uid >= 0)
+//				if (Util.getUserId(uid) != Util.getUserId(Binder.getCallingUid()))
+//					throw new SecurityException("uid=" + uid + " calling=" + Binder.getCallingUid());
+//
+//			int callingUid = Util.getAppId(Binder.getCallingUid());
+//			if (callingUid != getXUid() && callingUid != Process.SYSTEM_UID)
+//				throw new SecurityException("xuid=" + mXUid + " calling=" + Binder.getCallingUid());
 		}
 
 		private Context getContext() {

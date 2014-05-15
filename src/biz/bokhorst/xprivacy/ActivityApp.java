@@ -166,7 +166,23 @@ public class ActivityApp extends ActivityBase {
 			llInfo.setBackgroundColor(getResources().getColor(getThemed(R.attr.color_dangerous)));
 		}
 
-		// Display app icon
+
+        // Display log state for app
+
+        Switch swAppLog = (Switch) findViewById(R.id.swAppLog);
+        swAppLog.setChecked(PrivacyManager.getSettingBool(
+                mAppInfo.getUid(), PrivacyManager.cSettingAppLog, false,
+                false));
+        swAppLog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrivacyManager.setSetting(mAppInfo.getUid(), PrivacyManager.cSettingAppLog,
+                        Boolean.toString(isChecked));
+            }
+        });
+
+
+        // Display app icon
 		final ImageView imgIcon = (ImageView) findViewById(R.id.imgIcon);
 		imgIcon.setImageDrawable(mAppInfo.getIcon(this));
 

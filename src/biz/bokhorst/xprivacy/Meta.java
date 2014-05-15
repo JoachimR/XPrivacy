@@ -219,16 +219,16 @@ public class Meta {
 		mListHook.add(new Hook("phone", "getSimOperatorName", "", 10, null, null));
 		mListHook.add(new Hook("phone", "getGroupIdLevel1", "READ_PHONE_STATE", 18, null, null));
 		mListHook.add(new Hook("phone", "android.intent.action.NEW_OUTGOING_CALL", "PROCESS_OUTGOING_CALLS", 10, null, null));
-		mListHook.add(new Hook("phone", "android.intent.action.PHONE_STATE", "READ_PHONE_STATE", 10, null, null));
-		mListHook.add(new Hook("phone", "TelephonyProvider", "WRITE_APN_SETTINGS", 1, null, null));
-		mListHook.add(new Hook("phone", "CallLogProvider", "READ_CALL_LOG", 1, null, null));
-		mListHook.add(new Hook("phone", "Configuration.MCC", "", 1, "2.0", null).noUsageData().noOnDemand());
-		mListHook.add(new Hook("phone", "Configuration.MNC", "", 1, "2.0", null).noUsageData().noOnDemand());
+        mListHook.add(new Hook("phone", "android.intent.action.PHONE_STATE", "READ_PHONE_STATE", 10, null, null));
+        mListHook.add(new Hook("phone", "TelephonyProvider", "WRITE_APN_SETTINGS", 1, null, null));
+        mListHook.add(new Hook("phone", "CallLogProvider", "READ_CALL_LOG", 1, null, null));
+        mListHook.add(new Hook("phone", "Configuration.MCC", "", 1, "2.0", null).noUsageData().noOnDemand());
+        mListHook.add(new Hook("phone", "Configuration.MNC", "", 1, "2.0", null).noUsageData().noOnDemand());
 
-		mListHook.add(new Hook("sensors", "getDefaultSensor", "", 3, null, null));
-		mListHook.add(new Hook("sensors", "getSensorList", "", 3, null, null));
+        mListHook.add(new Hook("sensors", "getDefaultSensor", "", 3, null, null));
+        mListHook.add(new Hook("sensors", "getSensorList", "", 3, null, null));
 
-		mListHook.add(new Hook("shell", "sh", "", 10, null, null).whitelist(cTypeCommand));
+        mListHook.add(new Hook("shell", "sh", "", 10, null, null).whitelist(cTypeCommand));
 		mListHook.add(new Hook("shell", "su", "", 10, null, null).whitelist(cTypeCommand));
 		mListHook.add(new Hook("shell", "exec", "", 10, null, null).whitelist(cTypeCommand));
 		mListHook.add(new Hook("shell", "load", "", 10, null, null).dangerous().whitelist(cTypeLibrary));
