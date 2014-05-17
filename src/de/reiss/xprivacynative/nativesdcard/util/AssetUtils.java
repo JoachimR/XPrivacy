@@ -1,4 +1,4 @@
-package de.reiss.xprivacynative.util;
+package de.reiss.xprivacynative.nativesdcard.util;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -11,7 +11,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExportAssets {
+public class AssetUtils {
 
 
     private final static String SUBDIR = "exported_app_assets";
@@ -31,35 +31,44 @@ public class ExportAssets {
      * @param context
      * @param fileName
      */
-    public static void putToInternalTmpDir(Context context, String fileName) {
+    public static String putToInternalTmpDir(Context context, String fileName) {
 
         // copy asset file from compressed .apk to sdcard
         copyAssetFileToSdCard(context, fileName);
 
+        String res = "";
+
         // copy from sdcard to internal tmp folder (requires root)
         String cmd[] = {"su", "-c",
-                " cp " + "/sdcard" + "/" + SUBDIR + "/" + fileName
+//                "\" " +
+                        " cp " + "/sdcard" + "/" + SUBDIR + "/" + fileName
                         + " "
                         + TMP_DIR + "/" + fileName
+//                                + " \""
         };
-        Shell.sendShellCommand(cmd);
+        res += Shell.sendShellCommand(cmd);
 
+        res += "\n\n";
 
         String chmod777[] = {"su", "-c",
-                " chmod777 " + TMP_DIR + "/" + fileName
+//                "\" " +
+                        " chmod 777 " + TMP_DIR + "/" + fileName
+//                                + " \""
         };
-        Shell.sendShellCommand(chmod777);
+        res += Shell.sendShellCommand(chmod777);
 
-
+        return res;
     }
 
 
     public static boolean isAssetFileInTmpDir(String fileName) {
 
         String check[] = {"su", "-c",
-                "\"test -f "
+//                "\"" +
+                        "test -f "
                         + TMP_DIR + "/" + fileName + " && echo 'found' "
-                        + " || echo 'not found' \""
+                        + " || echo 'not found' "
+//                                +"\""
         };
         String result = Shell.sendShellCommand(check);
         if (result != null && result.equals("found")) {

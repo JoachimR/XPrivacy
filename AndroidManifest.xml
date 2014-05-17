@@ -110,6 +110,32 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+                android:name="de.reiss.xprivacynative.nativesdcard.ActivityFileObserve"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:parentActivityName=".ActivityMain" >
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="biz.bokhorst.xprivacy.ActivityMain" />
+
+            <intent-filter>
+                <action android:name="biz.bokhorst.xprivacy.action.FILEOBSERVE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+                android:name="de.reiss.xprivacynative.nativesdcard.FilePickerActivity"
+                android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
+                android:label="SELECT FILE TO WATCH"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="adjustPan">
+        </activity>
+
+
+
         <activity
             android:name=".ActivityShare"
             android:configChanges="keyboardHidden|orientation|screenSize"

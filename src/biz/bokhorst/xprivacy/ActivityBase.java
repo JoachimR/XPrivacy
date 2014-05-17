@@ -2,13 +2,12 @@ package biz.bokhorst.xprivacy;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Bitmap.Config;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -16,18 +15,16 @@ import android.os.Process;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
-import de.reiss.xprivacynative.util.ExportAssets;
 
 @SuppressLint("Registered")
 public class ActivityBase extends Activity {
-	private int mThemeId;
-	private Bitmap[] mCheck = null;
+    private int mThemeId;
+    private Bitmap[] mCheck = null;
 
-	@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        copyObjdumpBinary();
 
         if (PrivacyService.checkClient()) {
             // Set theme
@@ -60,18 +57,6 @@ public class ActivityBase extends Activity {
 		}
 	}
 
-    /**
-     * copy objdump to a folder where one can execute it from the shell
-     */
-    private void copyObjdumpBinary() {
-        final Context ctx = this;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ExportAssets.putToInternalTmpDir(ctx, "objdump");
-            }
-        }).start();
-    }
 
     protected Bitmap getOffCheckBox() {
 		if (mCheck == null)

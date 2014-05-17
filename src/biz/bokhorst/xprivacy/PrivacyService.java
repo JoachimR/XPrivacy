@@ -50,7 +50,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.*;
-import de.reiss.xprivacynative.ReadLibraryDependencies;
+import de.reiss.xprivacynative.nativeaudio.ReadLibraryDependencies;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1075,7 +1075,7 @@ public class PrivacyService {
 		public List<PSetting> getSettingList(int uid) throws RemoteException {
 			List<PSetting> listSetting = new ArrayList<PSetting>();
 			try {
-				enforcePermission(uid);
+				//enforcePermission(uid);
 				SQLiteDatabase db = getDb();
 				if (db == null)
 					return listSetting;

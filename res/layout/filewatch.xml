@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:padding="5dp"
+        >
+
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:padding="5dp"
+                  android:background="@drawable/border"
+            >
+        <Button
+                android:id="@+id/filewatch_btn_choosefile"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_choosefile"/>
+
+        <EditText
+                android:id="@+id/filewatch_ed_chosenfile"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="asd"
+                android:inputType="textVisiblePassword"/>
+
+        <Button
+                android:id="@+id/filewatch_btn_startwatching"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_startwatching"/>
+
+    </LinearLayout>
+
+    <ListView android:id="@+id/filewatch_lv_runningwatchers"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:padding="5dp"
+              android:background="@drawable/border"/>
+
+</LinearLayout>

@@ -21,6 +21,7 @@ import android.view.View.OnClickListener;
 import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import de.reiss.xprivacynative.nativesdcard.ActivityFileObserve;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -416,6 +417,9 @@ public class ActivityMain extends ActivityBase implements OnItemSelectedListener
 			case R.id.menu_usage:
 				optionUsage();
 				return true;
+            case R.id.menu_fileobserve:
+                optionFileObserve();
+                return true;
 			case R.id.menu_toggle:
 				optionToggle();
 				return true;
@@ -461,7 +465,12 @@ public class ActivityMain extends ActivityBase implements OnItemSelectedListener
 		}
 	}
 
-	// Filtering
+    private void optionFileObserve() {
+        Intent intent = new Intent(this, ActivityFileObserve.class);
+        startActivity(intent);
+    }
+
+    // Filtering
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {

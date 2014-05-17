@@ -77,12 +77,18 @@
     <string name="msg_upgrading">Upgrading %1$s</string>
     <string name="msg_support_info">An internal check failed, do you want to send the support info?</string>
     <string name="msg_restrictedby">Restricted by XPrivacy</string>
-    <string name="msg_service_missing">Privacy service not found; did you enable XPrivacy in the Xposed installer and reboot your device?</string>
-    <string name="msg_service_version">Privacy service version mismatch; did you reboot your device after upgrading XPrivacy?</string>
+    <string name="msg_service_missing">Privacy service not found; did you enable XPrivacy in the Xposed installer and
+        reboot your device?
+    </string>
+    <string name="msg_service_version">Privacy service version mismatch; did you reboot your device after upgrading
+        XPrivacy?
+    </string>
     <string name="msg_question" translatable="false">\?</string>
     <string name="msg_first"><b>Great care has been taken to develop and test XPrivacy,
-however it is impossible to guarantee it will work flawlessly on each and every device and for each and every application.
-\n\nUse is entirely at your own risk.</b>\n\nSee also the license:</string>
+        however it is impossible to guarantee it will work flawlessly on each and every device and for each and every
+        application.
+        \n\nUse is entirely at your own risk.</b>\n\nSee also the license:
+    </string>
     <string name="restrict_accounts" tools:ignore="UnusedResources">Accounts (Google, Facebook, etc)</string>
     <string name="restrict_browser" tools:ignore="UnusedResources">Browser (bookmarks/history)</string>
     <string name="restrict_calendar" tools:ignore="UnusedResources">Calendar</string>
@@ -195,12 +201,29 @@ however it is impossible to guarantee it will work flawlessly on each and every 
     <string name="help_shared">restrictions are submitted</string>
     <string name="tutorial_mainheader">Select the category to restrict</string>
     <string name="tutorial_mainlist">Tap a check box to restrict the selected category for an app\n
-\nApps will be fed empty or fake data for restricted categories\n
-\nTap the app icon for detailed restrictions and settings</string>
+        \nApps will be fed empty or fake data for restricted categories\n
+        \nTap the app icon for detailed restrictions and settings
+    </string>
     <string name="tutorial_detailsheader">Tap the app icon for more actions</string>
-    <string name="tutorial_detailslist">Tap the down arrow to see the function exceptions of a restriction category</string>
+    <string name="tutorial_detailslist">Tap the down arrow to see the function exceptions of a restriction category
+    </string>
     <string name="permission_manage">Manage applications, including killing</string>
     <string name="fingerprint" translatable="false">10620ae961d78854f6c9cd872c4388232849c799</string>
     <string name="tvLog">Log:</string>
+
+
+    <string name="filepicker_nofilesfound">no files found...</string>
+    <string name="filepicker_tv_hint">If you press long on a directory
+        the whole directory will be selected, not just one file.\nThe FileWatcher can
+        watch all files within the directory but NOT the files that are in subdirectories of the
+        directory.
+    </string>
+    <string name="btn_choosefile">Select file to watch</string>
+    <string name="btn_startwatching">Start watching this file</string>
+
+    <string name="btn_stoprunningthread">Stop</string>
+    <string name="menu_fileobserve">Observe File Access</string>
+    <string name="title_fileobserve">Observe File Access</string>
+
 
 </resources>

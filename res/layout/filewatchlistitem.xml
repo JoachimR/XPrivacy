@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:padding="5dp"
+              android:weightSum="1"
+        >
+    <TextView
+            android:id="@+id/filewatchlistitem_tv_thread"
+            android:layout_weight="0.7"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:text="thread"/>
+    <Button
+            android:id="@+id/filewatchlistitem_btn_stop"
+            android:layout_weight="0.3"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:text="@string/btn_stoprunningthread"/>
+</LinearLayout>

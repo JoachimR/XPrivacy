@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="5dp"
+        android:weightSum="1"
+        android:orientation="vertical"
+        >
+
+    <ScrollView android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.15">
+        <TextView
+                android:id="@+id/filepicker_tv_hint"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/filepicker_tv_hint"
+                />
+    </ScrollView>
+
+    <ListView
+            android:id="@+id/filepicker_lv_files"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.85"/>
+
+</LinearLayout>
