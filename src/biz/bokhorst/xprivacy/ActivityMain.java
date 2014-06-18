@@ -282,41 +282,44 @@ public class ActivityMain extends ActivityBase implements OnItemSelectedListener
 		if (requestCode == ACTIVITY_LICENSE) {
 			// License check
 			if (dataIntent != null) {
-				int code = dataIntent.getIntExtra("Code", -1);
-				int reason = dataIntent.getIntExtra("Reason", -1);
 
-				String sReason;
-				if (reason == LICENSED)
-					sReason = "LICENSED";
-				else if (reason == NOT_LICENSED)
-					sReason = "NOT_LICENSED";
-				else if (reason == RETRY)
-					sReason = "RETRY";
-				else if (reason == ERROR_CONTACTING_SERVER)
-					sReason = "ERROR_CONTACTING_SERVER";
-				else if (reason == ERROR_INVALID_PACKAGE_NAME)
-					sReason = "ERROR_INVALID_PACKAGE_NAME";
-				else if (reason == ERROR_NON_MATCHING_UID)
-					sReason = "ERROR_NON_MATCHING_UID";
-				else
-					sReason = Integer.toString(reason);
+                Util.setPro(true);
 
-				Util.log(null, Log.WARN, "Licensing: code=" + code + " reason=" + sReason);
-
-				if (code > 0) {
-					Util.setPro(true);
-					invalidateOptionsMenu();
-					Toast toast = Toast.makeText(this, getString(R.string.menu_pro), Toast.LENGTH_LONG);
-					toast.show();
-				} else if (reason == RETRY) {
-					Util.setPro(false);
-					mProHandler.postDelayed(new Runnable() {
-						@Override
-						public void run() {
-							checkLicense();
-						}
-					}, 30 * 1000);
-				}
+//				int code = dataIntent.getIntExtra("Code", -1);
+//				int reason = dataIntent.getIntExtra("Reason", -1);
+//
+//				String sReason;
+//				if (reason == LICENSED)
+//					sReason = "LICENSED";
+//				else if (reason == NOT_LICENSED)
+//					sReason = "NOT_LICENSED";
+//				else if (reason == RETRY)
+//					sReason = "RETRY";
+//				else if (reason == ERROR_CONTACTING_SERVER)
+//					sReason = "ERROR_CONTACTING_SERVER";
+//				else if (reason == ERROR_INVALID_PACKAGE_NAME)
+//					sReason = "ERROR_INVALID_PACKAGE_NAME";
+//				else if (reason == ERROR_NON_MATCHING_UID)
+//					sReason = "ERROR_NON_MATCHING_UID";
+//				else
+//					sReason = Integer.toString(reason);
+//
+//				Util.log(null, Log.WARN, "Licensing: code=" + code + " reason=" + sReason);
+//
+//				if (code > 0) {
+//					Util.setPro(true);
+//					invalidateOptionsMenu();
+//					Toast toast = Toast.makeText(this, getString(R.string.menu_pro), Toast.LENGTH_LONG);
+//					toast.show();
+//				} else if (reason == RETRY) {
+//					Util.setPro(false);
+//					mProHandler.postDelayed(new Runnable() {
+//						@Override
+//						public void run() {
+//							checkLicense();
+//						}
+//					}, 30 * 1000);
+//				}
 			}
 		}
 	}

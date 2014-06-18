@@ -29,6 +29,7 @@ public class ReadLibraryDependencies {
                 final String sdcard = "sdcard";
                 //  Environment.getExternalStorageDirectory() returns wrong path for shell
 
+                // TODO use objdump -p $f | awk '/ NEEDED / { print $2 }'
                 final String outFilePath = sdcard + "/" + libName + ".dump.txt";
                 final String suCmd = ""
                         + " ."

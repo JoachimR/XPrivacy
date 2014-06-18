@@ -111,8 +111,12 @@ public class ActivityApp extends ActivityBase {
 		}
 	};
 
+    private Context xprivacyContext;
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+        xprivacyContext = this;
 
 		final int userId = Util.getUserId(Process.myUid());
 
@@ -1141,7 +1145,7 @@ public class ActivityApp extends ActivityBase {
 								protected Object doInBackground(Object... arg0) {
 									// Change restriction
 									oldState = PrivacyManager.getRestartStates(mAppInfo.getUid(), restrictionName);
-									rstate.toggleRestriction();
+									rstate.toggleRestriction(xprivacyContext);
 									newState = PrivacyManager.getRestartStates(mAppInfo.getUid(), restrictionName);
 									return null;
 								}
@@ -1403,7 +1407,7 @@ public class ActivityApp extends ActivityBase {
 									@Override
 									protected Object doInBackground(Object... arg0) {
 										// Change restriction
-										rstate.toggleRestriction();
+										rstate.toggleRestriction(xprivacyContext);
 										return null;
 									}
 

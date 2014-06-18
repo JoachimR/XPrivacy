@@ -226,4 +226,13 @@
     <string name="title_fileobserve">Observe File Access</string>
 
 
+
+
+    <string name="ondemandialog_librariesincludedin">Libraries included in</string>
+    <string name="ondemandialog_libopensles_caution">CAUTION! WHEN USING libOpenSLES.so XPRIVACY WILL NOT RECOGNIZE AUDIO RECORDING</string>
+
+
+
+
+
 </resources>

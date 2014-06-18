@@ -6,6 +6,26 @@ import java.io.File;
 
 public class FileUtils {
 
+    public static String mkdirFiles() {
+        String res = "";
+
+        String mkdir[] = {"su", "-c",
+                " mkdir "
+                        + " "
+                        + "/data/data/biz.bokhorst.xprivacy/files"
+        };
+        res += Shell.sendShellCommand(mkdir);
+
+
+        String chmod777[] = {"su", "-c",
+                " chmod 777 /data/data/biz.bokhorst.xprivacy/files"
+        };
+        res += Shell.sendShellCommand(chmod777);
+
+
+        return res;
+    }
+
     /**
      * Create /data/data/biz.bokhorst.xprivacy/sdcardlog.txt
      * Requires root
@@ -14,18 +34,52 @@ public class FileUtils {
 
         String res = "";
 
-        String cmd[] = {"su", "-c",
-                " touch " + "/data/data/biz.bokhorst.xprivacy/sdcardlog.txt"
+        String cmd[] = {
+//                "su", "-c",
+                " touch " + "/data/data/biz.bokhorst.xprivacy/files/sdcardlog.txt"
         };
         res += Shell.sendShellCommand(cmd);
 
+        // http://www.user-archiv.de/chmod.html
+        // 660 == -rw-rw----
 
-
-        String chmod777[] = {"su", "-c",
-                " chmod 777 /data/data/biz.bokhorst.xprivacy/sdcardlog.txt"
+        String chmod[] = {
+//                "su", "-c",
+                " chmod 660 /data/data/biz.bokhorst.xprivacy/files/sdcardlog.txt"
         };
-        res += Shell.sendShellCommand(chmod777);
+        res += Shell.sendShellCommand(chmod);
 
+
+        return res;
+
+    }
+
+
+    /**
+     * Requires root
+     */
+    public static void createDisabledAccessUidsFiles() {
+        doCreateDisabledAccessUidsFiles("disabled_sdcardaccess_uids.txt");
+        doCreateDisabledAccessUidsFiles("disabled_recordaudio_uids.txt");
+    }
+
+    private static String doCreateDisabledAccessUidsFiles(String endOfFilename) {
+        String res = "";
+
+        String cmd[] = {
+//                "su", "-c",
+                " touch " + "/data/data/biz.bokhorst.xprivacy/files/" + endOfFilename
+        };
+        res += Shell.sendShellCommand(cmd);
+
+        // http://www.user-archiv.de/chmod.html
+        // 664 == -rw-rw-r--
+
+        String chmod[] = {
+//                "su", "-c",
+                " chmod 664 /data/data/biz.bokhorst.xprivacy/files/" + endOfFilename
+        };
+        res += Shell.sendShellCommand(chmod);
 
 
         return res;
@@ -41,25 +95,9 @@ public class FileUtils {
 
         String res = "";
 
-        String mkdir[] = {"su", "-c",
-                " mkdir "
-                        + " "
-                        + "/data/data/biz.bokhorst.xprivacy/files"
-        };
-        res += Shell.sendShellCommand(mkdir);
-
-        String chmod777files[] = {"su", "-c",
-                " chmod 777 /data/data/biz.bokhorst.xprivacy/files"
-        };
-        res += Shell.sendShellCommand(chmod777files);
-
-
-
-
-
 
         String cmd[] = {"su", "-c",
-                        " cp " + "/data/system/packages.xml"
+                " cp " + "/data/system/packages.xml"
                         + " "
                         + "/data/data/biz.bokhorst.xprivacy/files/packages.xml"
         };
@@ -67,10 +105,14 @@ public class FileUtils {
 
         res += "\n\n";
 
-        String chmod777packages[] = {"su", "-c",
-                        " chmod 777 /data/data/biz.bokhorst.xprivacy/files/packages.xml"
+        // http://www.user-archiv.de/chmod.html
+        // 660 == -rw-rw----
+
+        String chmod[] = {
+//                "su", "-c",
+                " chmod 660 /data/data/biz.bokhorst.xprivacy/files/packages.xml"
         };
-        res += Shell.sendShellCommand(chmod777packages);
+        res += Shell.sendShellCommand(chmod);
 
         return res;
 

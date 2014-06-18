@@ -20,7 +20,9 @@ public class BootReceiver extends BroadcastReceiver {
         changeIntent.putExtra(UpdateService.cAction, UpdateService.cActionBoot);
         context.startService(changeIntent);
 
+        // <PEM>
         initFilesInBackground(context);
+        // </PEM>
 
         // Check if Xposed enabled
         if (Util.isXposedEnabled()) {
@@ -52,34 +54,23 @@ public class BootReceiver extends BroadcastReceiver {
 
     }
 
+
+    // <PEM>
     private void initFilesInBackground(final Context ctx) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                createSdcardLogFile();
-                copyObjdumpBinary(ctx);
-                copyPackagesXml();
+                FileUtils.mkdirFiles();
+
+                FileUtils.createSdcardLogFile();
+                FileUtils.createDisabledAccessUidsFiles();
+                FileUtils.copyPackagesXmlFile();
+
+                AssetUtils.putToInternalTmpDir(ctx, "objdump");
             }
         }).start();
     }
-
-    private void createSdcardLogFile() {
-        String s = FileUtils.createSdcardLogFile();
-    }
-
-    /**
-     * copy objdump to a folder where it can be executed from the shell
-     */
-    private void copyObjdumpBinary(final Context ctx) {
-        AssetUtils.putToInternalTmpDir(ctx, "objdump");
-    }
-
-    /**
-     * copy /data/system/packages.xml to /data/data/biz.bokhorst.xprivacy/ files
-     */
-    private void copyPackagesXml() {
-        String s = FileUtils.copyPackagesXmlFile();
-    }
+    // </PEM>
 
 
 }
