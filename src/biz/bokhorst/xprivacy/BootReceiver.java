@@ -7,8 +7,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-import de.reiss.xprivacynative.nativesdcard.util.AssetUtils;
-import de.reiss.xprivacynative.nativesdcard.util.FileUtils;
+import android.util.Log;
+import de.reiss.xprivacynative.Global;
+import de.reiss.xprivacynative.util.AssetUtils;
+import de.reiss.xprivacynative.FileManagement;
 
 public class BootReceiver extends BroadcastReceiver {
 
@@ -60,13 +62,14 @@ public class BootReceiver extends BroadcastReceiver {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                FileUtils.mkdirFiles();
+                FileManagement.mkdirFiles();
 
-                FileUtils.createSdcardLogFile();
-                FileUtils.createDisabledAccessUidsFiles();
-                FileUtils.copyPackagesXmlFile();
+                FileManagement.createSdcardLogFile();
+                FileManagement.createDisabledAccessUidsFiles();
+                FileManagement.copyPackagesXmlFile();
 
-                AssetUtils.putToInternalTmpDir(ctx, "objdump");
+                String s = AssetUtils.putToTmpDir(ctx, "objdump");
+                Log.d(Global.TAG, "Result for 'AssetUtils.putToTmpDir(ctx, \"objdump\");' : " + s);
             }
         }).start();
     }

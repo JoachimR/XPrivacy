@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import de.reiss.xprivacynative.Shell;
-import de.reiss.xprivacynative.nativesdcard.util.AssetUtils;
+import de.reiss.xprivacynative.util.AssetUtils;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -30,6 +30,9 @@ public class ReadLibraryDependencies {
                 //  Environment.getExternalStorageDirectory() returns wrong path for shell
 
                 // TODO use objdump -p $f | awk '/ NEEDED / { print $2 }'
+
+                // TODO awk does not work....
+
                 final String outFilePath = sdcard + "/" + libName + ".dump.txt";
                 final String suCmd = ""
                         + " ."

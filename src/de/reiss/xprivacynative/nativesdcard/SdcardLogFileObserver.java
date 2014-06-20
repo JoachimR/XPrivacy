@@ -5,7 +5,7 @@ import android.os.FileObserver;
 import android.text.TextUtils;
 import android.util.Log;
 import de.reiss.xprivacynative.Global;
-import de.reiss.xprivacynative.nativesdcard.util.Utils;
+import de.reiss.xprivacynative.util.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;

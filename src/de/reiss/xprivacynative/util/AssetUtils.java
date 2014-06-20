@@ -1,4 +1,4 @@
-package de.reiss.xprivacynative.nativesdcard.util;
+package de.reiss.xprivacynative.util;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -24,14 +24,13 @@ public class AssetUtils {
      * Make sure that a file from the apk's
      * asset folder is copied to
      * an Android internal folder.
-     * Only gets copied if not found so far.
      * <p/>
      * Requires root obv
      *
      * @param context
      * @param fileName
      */
-    public static String putToInternalTmpDir(Context context, String fileName) {
+    public static String putToTmpDir(Context context, String fileName) {
 
         // copy asset file from compressed .apk to sdcard
         copyAssetFileToSdCard(context, fileName);
@@ -40,22 +39,23 @@ public class AssetUtils {
 
         // copy from sdcard to internal tmp folder (requires root)
         String cmd[] = {"su", "-c",
-//                "\" " +
                         " cp " + "/sdcard" + "/" + SUBDIR + "/" + fileName
                         + " "
                         + TMP_DIR + "/" + fileName
-//                                + " \""
         };
         res += Shell.sendShellCommand(cmd);
 
         res += "\n\n";
 
         String chmod777[] = {"su", "-c",
-//                "\" " +
                         " chmod 777 " + TMP_DIR + "/" + fileName
-//                                + " \""
         };
         res += Shell.sendShellCommand(chmod777);
+
+        // delete from sdcard
+        String cmdRemove[] = {
+                " rm -r " + "/sdcard" + "/" + SUBDIR + "/"};
+        res += Shell.sendShellCommand(cmdRemove);
 
         return res;
     }

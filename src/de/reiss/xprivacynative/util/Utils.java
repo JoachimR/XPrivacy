@@ -1,4 +1,4 @@
-package de.reiss.xprivacynative.nativesdcard.util;
+package de.reiss.xprivacynative.util;
 
 import android.app.NotificationManager;
 import android.content.Context;

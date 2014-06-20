@@ -229,7 +229,8 @@
 
 
     <string name="ondemandialog_librariesincludedin">Libraries included in</string>
-    <string name="ondemandialog_libopensles_caution">CAUTION! WHEN USING libOpenSLES.so XPRIVACY WILL NOT RECOGNIZE AUDIO RECORDING</string>
+    <string name="ondemandialog_libopensles_caution">CAUTION! WHEN USING libOpenSLES.so XPRIVACY WILL NOT RECOGNIZE AUDIO RECORDING.\nPLEASE RESTRICT AUDIO RECORDING IN THE MEDIA SETTINGS FIRST</string>
+    <string name="ondemandialog_libc_caution">CAUTION! WHEN USING libc.so XPRIVACY WILL NOT RECOGNIZE SDCARD ACCESS.\nPLEASE RESTRICT THE ACCESS IN THE STORAGE SETTINGS FIRST</string>
 
 
 

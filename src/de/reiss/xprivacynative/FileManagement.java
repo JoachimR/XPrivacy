@@ -1,10 +1,12 @@
-package de.reiss.xprivacynative.nativesdcard.util;
+package de.reiss.xprivacynative;
 
+import de.reiss.xprivacynative.Global;
 import de.reiss.xprivacynative.Shell;
 
 import java.io.File;
 
-public class FileUtils {
+public class FileManagement {
+
 
     public static String mkdirFiles() {
         String res = "";
@@ -35,7 +37,7 @@ public class FileUtils {
         String res = "";
 
         String cmd[] = {
-//                "su", "-c",
+                "su", "-c",
                 " touch " + "/data/data/biz.bokhorst.xprivacy/files/sdcardlog.txt"
         };
         res += Shell.sendShellCommand(cmd);
@@ -44,8 +46,11 @@ public class FileUtils {
         // 660 == -rw-rw----
 
         String chmod[] = {
-//                "su", "-c",
-                " chmod 660 /data/data/biz.bokhorst.xprivacy/files/sdcardlog.txt"
+                "su", "-c",
+                " chmod " +
+//                        "660" +
+                        "777"+
+                        " /data/data/biz.bokhorst.xprivacy/files/sdcardlog.txt"
         };
         res += Shell.sendShellCommand(chmod);
 
@@ -59,16 +64,19 @@ public class FileUtils {
      * Requires root
      */
     public static void createDisabledAccessUidsFiles() {
-        doCreateDisabledAccessUidsFiles("disabled_sdcardaccess_uids.txt");
-        doCreateDisabledAccessUidsFiles("disabled_recordaudio_uids.txt");
+        doCreateDisabledAccessUidsFiles(Global.DISABLED_SDCARDACCESS_UIDS + ".txt");
+        doCreateDisabledAccessUidsFiles(Global.DISABLED_RECORDAUDIO_UIDS_TXT);
+        doCreateDisabledAccessUidsFiles(Global.DISABLED_SHELLCMDS_UIDS_TXT);
+
+
     }
 
-    private static String doCreateDisabledAccessUidsFiles(String endOfFilename) {
+    private static String doCreateDisabledAccessUidsFiles(String filename) {
         String res = "";
 
         String cmd[] = {
-//                "su", "-c",
-                " touch " + "/data/data/biz.bokhorst.xprivacy/files/" + endOfFilename
+                "su", "-c",
+                " touch " + "/data/data/biz.bokhorst.xprivacy/files/" + filename
         };
         res += Shell.sendShellCommand(cmd);
 
@@ -76,8 +84,11 @@ public class FileUtils {
         // 664 == -rw-rw-r--
 
         String chmod[] = {
-//                "su", "-c",
-                " chmod 664 /data/data/biz.bokhorst.xprivacy/files/" + endOfFilename
+                "su", "-c",
+                " chmod " +
+//                        "664" +
+                        "777"+
+                        " /data/data/biz.bokhorst.xprivacy/files/" + filename
         };
         res += Shell.sendShellCommand(chmod);
 
@@ -109,10 +120,16 @@ public class FileUtils {
         // 660 == -rw-rw----
 
         String chmod[] = {
-//                "su", "-c",
-                " chmod 660 /data/data/biz.bokhorst.xprivacy/files/packages.xml"
+                "su", "-c",
+                " chmod " +
+//                        "660" +
+                        "777"+
+                        " /data/data/biz.bokhorst.xprivacy/files/packages.xml"
         };
         res += Shell.sendShellCommand(chmod);
+
+
+
 
         return res;
 

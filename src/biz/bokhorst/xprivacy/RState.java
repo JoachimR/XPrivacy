@@ -2,11 +2,8 @@ package biz.bokhorst.xprivacy;
 
 import android.content.Context;
 import android.os.Process;
+import de.reiss.xprivacynative.NativeAccessManagement;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,128 +109,27 @@ public class RState {
 
         // <PEM>
 
-        // additionally, take care of native sdcard access
+        // additionally, take care of native access
 
-        if (mUid < 0 || mMethodName == null) {
+        if (mUid < 0) {
             return;
         }
 
-        if (mMethodName.equals("sdcard")) {
-
-            final String filename = "disabled_sdcardaccess_uids.txt";
-            // file has the format:  uid1,uid2,uid3,...
-            // The modified system/bin/sdcard process reads from that file
-            // when a file is about to be opened
-
-
-            final String contentSoFar = readFromFileUsingContext(xprivacyContext, filename);
-
-            if (newRestrictedState) {
-                // add the uid to the file
-                if (!contentSoFar.startsWith(mUid + ",") && !contentSoFar.contains("," + mUid + ",")) {
-                    appendToFileUsingContext(xprivacyContext, filename, mUid + ",");
-                }
-            } else {
-                // remove the uid from the file
-
-                String newContent = null;
-                if (contentSoFar.startsWith(mUid + ",")) {
-                    // remove uidX, in the file with the format uidX,uid2,uid3,...
-                    newContent = contentSoFar.replaceAll(mUid + ",", "");
-                } else if (contentSoFar.contains("," + mUid + ",")) {
-                    // replace ,uidX, with , in the file with the format uid1,uidX,uid3,...
-                    newContent = contentSoFar.replaceAll("," + mUid + ",", ",");
-                }
-
-                if (newContent != null) {
-                    createFileUsingContext(xprivacyContext, filename);
-                    appendToFileUsingContext(xprivacyContext, filename, newContent);
-                }
-            }
+        if (mMethodName == null) {
+            // whole category has been selected, do nothing
+        } else  if (mMethodName.equals("sdcard") || mMethodName.equals("open") || mMethodName.equals("media")) {
+            NativeAccessManagement.takeCareOfSdCardNativeAccess(newRestrictedState, mUid + "");
+        }
+        else  if (mMethodName.equals("start") ) {
+            NativeAccessManagement.takeCareOfRunCommandNative(newRestrictedState, mUid + "");
         }
         else if (mMethodName.equals("startRecording")) {
-
-            final String filename = "disabled_recordaudio_uids.txt";
-            // file has the format:  uid1,uid2,uid3,...
-            // The modified system/lib/libOpenSLES library reads from that file
-            // when native recording is about to take place
-
-
-            final String contentSoFar = readFromFileUsingContext(xprivacyContext, filename);
-
-            if (newRestrictedState) {
-                // add the uid to the file
-                if (!contentSoFar.startsWith(mUid + ",") && !contentSoFar.contains("," + mUid + ",")) {
-                    appendToFileUsingContext(xprivacyContext, filename, mUid + ",");
-                }
-            } else {
-                // remove the uid from the file
-
-                String newContent = null;
-                if (contentSoFar.startsWith(mUid + ",")) {
-                    // remove uidX, in the file with the format uidX,uid2,uid3,...
-                    newContent = contentSoFar.replaceAll(mUid + ",", "");
-                } else if (contentSoFar.contains("," + mUid + ",")) {
-                    // replace ,uidX, with , in the file with the format uid1,uidX,uid3,...
-                    newContent = contentSoFar.replaceAll("," + mUid + ",", ",");
-                }
-
-                if (newContent != null) {
-                    createFileUsingContext(xprivacyContext, filename);
-                    appendToFileUsingContext(xprivacyContext, filename, newContent);
-                }
-            }
+            NativeAccessManagement.takeCareOfRecordAudioNative(newRestrictedState, mUid + "");
         }
 
         // </PEM>
 
     }
-
-    // <PEM>
-
-    private String readFromFileUsingContext(Context context, String fileName) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            FileInputStream fis = context.openFileInput(fileName);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-            String read;
-            if (fis != null) {
-                while ((read = reader.readLine()) != null
-                        && sb.length() <= 1024) {
-                    sb.append(read + "\n");
-                }
-                fis.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return sb.toString().trim();
-    }
-
-    private boolean appendToFileUsingContext(Context context, String fileName, String textToAppend) {
-        try {
-            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_APPEND);
-            fos.write(textToAppend.getBytes());
-            fos.close();
-            return true;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private boolean createFileUsingContext(Context context, String fileName) {
-        try {
-            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // </PEM>
 
     public void toggleAsked() {
         asked = !asked;

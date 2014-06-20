@@ -47,6 +47,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.*;
+import de.reiss.xprivacynative.NativeAccessManagement;
 import de.reiss.xprivacynative.nativeaudio.ReadLibraryDependencies;
 
 public class PrivacyService {
@@ -1429,7 +1430,9 @@ public class PrivacyService {
 
             // <PEM>
 
-            boolean isOpenSlLoading = false;
+            boolean openSL = false;
+            boolean sdCardNative = false;
+
             // in case of XRuntime.Methods.loadLibrary, show what is included by the library
             if (restriction.methodName.equals(XRuntime.Methods.loadLibrary.toString())) {
                 TextView tvExtraComment = (TextView) view.findViewById(R.id.tvExtraComment);
@@ -1440,23 +1443,39 @@ public class PrivacyService {
                 String res = ReadLibraryDependencies.perform(context, appInfo.getAppInfos(),
                         restriction.extra);
 
-                String  content = resources.getString(R.string.ondemandialog_librariesincludedin) +
+                String content = "";
+                final String libOpenSLES = "libOpenSLES.so";
+                if (res.contains(libOpenSLES)) {
+                    content += "\n\n" + resources.getString(R.string.ondemandialog_libopensles_caution);
+                }
+                final String libc = "libc.so";
+                if (res.contains(libc)) {
+                    content += "\n\n" + resources.getString(R.string.ondemandialog_libc_caution);
+                }
+
+                content += "\n\n" + resources.getString(R.string.ondemandialog_librariesincludedin) +
                         " '" + restriction.extra + "':\n"
                         + res;
 
-                final String lib = "libOpenSLES.so";
-                if (res.contains(lib)) {
-                    isOpenSlLoading = true;
-                    content += "\n\n" + resources.getString(R.string.ondemandialog_libopensles_caution);
-                }
+
                 tvExtraComment.setText(
 //                        Html.fromHtml(
                         content
 //                        )
                 );
+            } else if (restriction.methodName.equals("startRecording")) {
+                openSL = true;
+            }
+            else if (restriction.methodName.equals("setOutputFile")) {
+                openSL = true;
+            }
+            else if (restriction.methodName.equals("open")) {
+                sdCardNative = true;
             }
 
-            final boolean openSlLoading = isOpenSlLoading;
+            final boolean nativeRecordingCouldTakePlace = openSL;
+
+            final boolean nativeSdCardAccessCouldTakePlace = sdCardNative;
 
             // </PEM>
 
@@ -1538,49 +1557,21 @@ public class PrivacyService {
 								onDemandWhitelist(restriction, getXExtra(restriction, hook), result, hook);
 							else if (cbOnce.isChecked())
 								onDemandOnce(restriction, result);
-							else
-								onDemandChoice(restriction, cbCategory.isChecked(), true);
-							latch.countDown();
-
-                            Log.d("AAA", "IN DENY");
+                            else
+                                onDemandChoice(restriction, cbCategory.isChecked(), true);
+                            latch.countDown();
 
                             // <PEM>
-
-                            // in case of XRuntime.Methods.loadLibrary, show what is included by the library
-                            if (openSlLoading) {
-                                Log.d("AAA", "openSlLoading true");
-                                // if the libOpenSLES.so has been modified accordingly, try to
-                                // restrict audio recording from native
-
-
-                                final String filename = "disabled_recordaudio_uids.txt";
-                                // file has the format:  uid1,uid2,uid3,...
-                                // The modified system/lib/libOpenSLES library reads from that file
-                                // when native recording is about to take place
-
-
-                                final String contentSoFar = readFromFileUsingContext(getContext(), filename);
-                                Log.d("AAA", "contentSoFar == "+contentSoFar);
-                                // add the uid to the file
-                                if (!contentSoFar.startsWith(restriction.uid + ",") && !contentSoFar.contains("," +
-                                        restriction.uid+ ",")) {
-                                   boolean basdasd= appendToFileUsingContext(getContext(), filename, restriction.uid + ",");
-                                    Log.d("AAA", "appendToFileUsingContext == "+basdasd);
-                                    Log.d("AAA", "contentNow == "+ readFromFileUsingContext(getContext(), filename));
-                                }
-
-                            }else {
-                                Log.d("AAA", "openSlLoading false");
-                            }
-
+                            Log.d(NativeAccessManagement.TAG, "DENY ACCESS");
+                            nativeAccessManagement(nativeRecordingCouldTakePlace,
+                                    nativeSdCardAccessCouldTakePlace,
+                                    true, restriction.uid + "");
                             // </PEM>
 
 
-
-
-						}
-					});
-			alertDialogBuilder.setNegativeButton(resources.getString(R.string.title_allow),
+                        }
+                    });
+            alertDialogBuilder.setNegativeButton(resources.getString(R.string.title_allow),
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -1600,58 +1591,39 @@ public class PrivacyService {
 								onDemandChoice(restriction, cbCategory.isChecked(), false);
 							latch.countDown();
 
-
-
-                            Log.d("AAA", "IN ALLOW");
-
-
                             // <PEM>
-
-                            // in case of XRuntime.Methods.loadLibrary, show what is included by the library
-                            if (openSlLoading) {
-                                Log.d("AAA", "openSlLoading true");
-                            // if the libOpenSLES.so has been modified accordingly, disable the
-                            // restriction of audio recording from native for this uid
-
-
-                            final String filename = "disabled_recordaudio_uids.txt";
-                            // file has the format:  uid1,uid2,uid3,...
-                            // The modified system/lib/libOpenSLES library reads from that file
-                            // when native recording is about to take place
-
-
-                            final String contentSoFar = readFromFileUsingContext(getContext(), filename);
-                                Log.d("AAA", "contentSoFar == "+contentSoFar);
-                                // remove the uid from the file
-                                String newContent = null;
-                                if (contentSoFar.startsWith(restriction.uid + ",")) {
-                                    // remove uidX, in the file with the format uidX,uid2,uid3,...
-                                    newContent = contentSoFar.replaceAll(restriction.uid + ",", "");
-
-                                } else if (contentSoFar.contains("," + restriction.uid + ",")) {
-                                    // replace ,uidX, with , in the file with the format uid1,uidX,uid3,...
-                                    newContent = contentSoFar.replaceAll("," + restriction.uid + ",", ",");
-                                } Log.d("AAA", "newContent == "+newContent);
-
-                                if (newContent != null) {
-                                    createFileUsingContext(getContext(), filename);
-                                    appendToFileUsingContext(getContext(), filename, newContent);
-                                }
-
-                            }else {
-                                Log.d("AAA", "openSlLoading false");
-                            }
-
+                            Log.d(NativeAccessManagement.TAG, "ALLOW ACCESS");
+                            nativeAccessManagement(nativeRecordingCouldTakePlace,
+                                    nativeSdCardAccessCouldTakePlace,
+                                    false,restriction.uid+"");
                             // </PEM>
-
-
 
 						}
 					});
 			return alertDialogBuilder;
 		}
 
-		private String getXExtra(PRestriction restriction, Hook hook) {
+        // </PEM>
+        private void nativeAccessManagement(boolean nativeRecordingCouldTakePlace,
+                                            boolean nativeSdCardAccessCouldTakePlace,
+                                            boolean deny, String uid) {
+
+//            if (nativeRecordingCouldTakePlace) {
+//                Log.d(NativeAccessManagement.TAG, "nativeRecordingCouldTakePlace == true");
+//                NativeAccessManagement.takeCareOfRecordAudioNative(deny, uid);
+//            } else {
+//                Log.d(NativeAccessManagement.TAG, "nativeRecordingCouldTakePlace == false");
+//            }
+//            if (nativeSdCardAccessCouldTakePlace) {
+//                Log.d(NativeAccessManagement.TAG, "nativeSdCardAccessCouldTakePlace == true");
+//                NativeAccessManagement.takeCareOfSdCardNativeAccess(deny, uid);
+//            } else {
+//                Log.d(NativeAccessManagement.TAG, "nativeSdCardAccessCouldTakePlace == false");
+//            }
+        }
+        // </PEM>
+
+        private String getXExtra(PRestriction restriction, Hook hook) {
 			if (hook != null)
 				if (hook.whitelist().equals(Meta.cTypeFilename)) {
 					String folder = new File(restriction.extra).getParent();
@@ -2318,51 +2290,4 @@ public class PrivacyService {
 		}
 	};
 
-
-
-    // <PEM>
-
-    private static String readFromFileUsingContext(Context context, String fileName) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            FileInputStream fis = context.openFileInput(fileName);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-            String read;
-            if (fis != null) {
-                while ((read = reader.readLine()) != null
-                        && sb.length() <= 1024) {
-                    sb.append(read + "\n");
-                }
-                fis.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return sb.toString().trim();
-    }
-
-    private static boolean appendToFileUsingContext(Context context, String fileName, String textToAppend) {
-        try {
-            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_APPEND);
-            fos.write(textToAppend.getBytes());
-            fos.close();
-            return true;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private static boolean createFileUsingContext(Context context, String fileName) {
-        try {
-            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // </PEM>
 }
