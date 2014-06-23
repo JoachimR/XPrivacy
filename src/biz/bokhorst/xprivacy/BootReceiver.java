@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import de.reiss.xprivacynative.Global;
-import de.reiss.xprivacynative.util.AssetUtils;
 import de.reiss.xprivacynative.FileManagement;
 
 public class BootReceiver extends BroadcastReceiver {
@@ -68,7 +67,7 @@ public class BootReceiver extends BroadcastReceiver {
                 FileManagement.createDisabledAccessUidsFiles();
                 FileManagement.copyPackagesXmlFile();
 
-                String s = AssetUtils.putToTmpDir(ctx, "objdump");
+                String s = FileManagement.putToFilesDir(ctx, "objdump");
                 Log.d(Global.TAG, "Result for 'AssetUtils.putToTmpDir(ctx, \"objdump\");' : " + s);
             }
         }).start();

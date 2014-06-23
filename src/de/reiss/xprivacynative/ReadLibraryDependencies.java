@@ -1,4 +1,4 @@
-package de.reiss.xprivacynative.nativeaudio;
+package de.reiss.xprivacynative;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -36,7 +36,7 @@ public class ReadLibraryDependencies {
                 final String outFilePath = sdcard + "/" + libName + ".dump.txt";
                 final String suCmd = ""
                         + " ."
-                        + AssetUtils.TMP_DIR + "/" + "objdump"
+                        + FileManagement.FILES_DIR + "/" + "objdump"
                         + " --all-headers "
                         + oneAppInfo.nativeLibraryDir + "/"
                         + libName

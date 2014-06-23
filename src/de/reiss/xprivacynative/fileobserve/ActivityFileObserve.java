@@ -1,4 +1,4 @@
-package de.reiss.xprivacynative.nativesdcard;
+package de.reiss.xprivacynative.fileobserve;
 
 import android.app.Activity;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package de.reiss.xprivacynative.nativesdcard;
+package de.reiss.xprivacynative.fileobserve;
 
 
 public class InstalledApp {

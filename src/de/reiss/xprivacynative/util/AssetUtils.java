@@ -16,80 +16,10 @@ public class AssetUtils {
 
     private final static String SUBDIR = "exported_app_assets";
 
-    public final static String TMP_DIR = "/data/local/tmp";
     public final static String SDCARD_DIR = Environment.getExternalStorageDirectory() + "/" + SUBDIR;
 
 
-    /**
-     * Make sure that a file from the apk's
-     * asset folder is copied to
-     * an Android internal folder.
-     * <p/>
-     * Requires root obv
-     *
-     * @param context
-     * @param fileName
-     */
-    public static String putToTmpDir(Context context, String fileName) {
-
-        // copy asset file from compressed .apk to sdcard
-        copyAssetFileToSdCard(context, fileName);
-
-        String res = "";
-
-        // copy from sdcard to internal tmp folder (requires root)
-        String cmd[] = {"su", "-c",
-                        " cp " + "/sdcard" + "/" + SUBDIR + "/" + fileName
-                        + " "
-                        + TMP_DIR + "/" + fileName
-        };
-        res += Shell.sendShellCommand(cmd);
-
-        res += "\n\n";
-
-        String chmod777[] = {"su", "-c",
-                        " chmod 777 " + TMP_DIR + "/" + fileName
-        };
-        res += Shell.sendShellCommand(chmod777);
-
-        // delete from sdcard
-        String cmdRemove[] = {
-                " rm -r " + "/sdcard" + "/" + SUBDIR + "/"};
-        res += Shell.sendShellCommand(cmdRemove);
-
-        return res;
-    }
-
-
-    public static boolean isAssetFileInTmpDir(String fileName) {
-
-        String check[] = {"su", "-c",
-//                "\"" +
-                        "test -f "
-                        + TMP_DIR + "/" + fileName + " && echo 'found' "
-                        + " || echo 'not found' "
-//                                +"\""
-        };
-        String result = Shell.sendShellCommand(check);
-        if (result != null && result.equals("found")) {
-            System.out.println(result);
-            return true;
-        }
-        return false;
-
-    }
-
-    /**
-     * Copy an asset file of a given app to /sdcard/exported_app_assets/
-     *
-     * @param context  the Context of the app
-     * @param fileName the fileName of the file that is in the assets folder of the given app
-     */
-    private static void copyAssetFileToSdCard(Context context, String fileName) {
-        copyFileOrDir(context, fileName);
-    }
-
-    private static void copyFileOrDir(Context context, String path) {
+    public static void copyFileOrDir(Context context, String path) {
         AssetManager assetManager = context.getAssets();
         String assets[] = null;
         try {
@@ -127,7 +57,7 @@ public class AssetUtils {
         }
     }
 
-    private static void copyFile(Context context, String filename) {
+    public static void copyFile(Context context, String filename) {
         AssetManager assetManager = context.getAssets();
 
         InputStream in = null;

@@ -21,7 +21,7 @@ import android.view.View.OnClickListener;
 import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import de.reiss.xprivacynative.nativesdcard.ActivityFileObserve;
+import de.reiss.xprivacynative.fileobserve.ActivityFileObserve;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;

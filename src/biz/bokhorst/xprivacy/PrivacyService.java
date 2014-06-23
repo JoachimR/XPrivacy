@@ -48,7 +48,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.*;
 import de.reiss.xprivacynative.NativeAccessManagement;
-import de.reiss.xprivacynative.nativeaudio.ReadLibraryDependencies;
+import de.reiss.xprivacynative.ReadLibraryDependencies;
 
 public class PrivacyService {
 	private static int mXUid = -1;
@@ -1554,19 +1554,25 @@ public class PrivacyService {
 							if (cbWhitelist.isChecked())
 								onDemandWhitelist(restriction, null, result, hook);
 							else if (cbWhitelistExtra.isChecked())
-								onDemandWhitelist(restriction, getXExtra(restriction, hook), result, hook);
-							else if (cbOnce.isChecked())
-								onDemandOnce(restriction, result);
-                            else
+                                onDemandWhitelist(restriction, getXExtra(restriction, hook), result, hook);
+                            else if (cbOnce.isChecked())
+                                onDemandOnce(restriction, result);
+                            else {
                                 onDemandChoice(restriction, cbCategory.isChecked(), true);
+                                // <PEM>
+                                if (restriction.methodName != null) {
+                                    if (restriction.methodName.equals("open") || restriction.methodName.equals("sdcard")) {
+                                        NativeAccessManagement.updateSdcardBlacklist(restriction.uid);
+                                    }
+                                    else if (restriction.methodName.equals("startRecording")) {
+                                        NativeAccessManagement.updateRecordAudioBlacklist(restriction.uid);
+                                    } else if (restriction.methodName.equals("start")) {
+                                        NativeAccessManagement.updateRunCommandBlacklist(restriction.uid);
+                                    }
+                                }
+                                // </PEM>
+                            }
                             latch.countDown();
-
-                            // <PEM>
-                            Log.d(NativeAccessManagement.TAG, "DENY ACCESS");
-                            nativeAccessManagement(nativeRecordingCouldTakePlace,
-                                    nativeSdCardAccessCouldTakePlace,
-                                    true, restriction.uid + "");
-                            // </PEM>
 
 
                         }
@@ -1587,19 +1593,17 @@ public class PrivacyService {
 								onDemandWhitelist(restriction, getXExtra(restriction, hook), result, hook);
 							else if (cbOnce.isChecked())
 								onDemandOnce(restriction, result);
-							else
-								onDemandChoice(restriction, cbCategory.isChecked(), false);
-							latch.countDown();
+							else {
+                                onDemandChoice(restriction, cbCategory.isChecked(), false);
+                                // <PEM>
+                                NativeAccessManagement.updateAllBlacklists(restriction.uid);
+                                // </PEM>
+                            }
+                            latch.countDown();
 
-                            // <PEM>
-                            Log.d(NativeAccessManagement.TAG, "ALLOW ACCESS");
-                            nativeAccessManagement(nativeRecordingCouldTakePlace,
-                                    nativeSdCardAccessCouldTakePlace,
-                                    false,restriction.uid+"");
-                            // </PEM>
 
-						}
-					});
+                        }
+                    });
 			return alertDialogBuilder;
 		}
 
@@ -1607,6 +1611,11 @@ public class PrivacyService {
         private void nativeAccessManagement(boolean nativeRecordingCouldTakePlace,
                                             boolean nativeSdCardAccessCouldTakePlace,
                                             boolean deny, String uid) {
+
+
+            // do not change native access when set dynamically
+
+
 
 //            if (nativeRecordingCouldTakePlace) {
 //                Log.d(NativeAccessManagement.TAG, "nativeRecordingCouldTakePlace == true");

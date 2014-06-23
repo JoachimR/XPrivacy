@@ -39,6 +39,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
@@ -70,6 +71,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import de.reiss.xprivacynative.NativeAccessManagement;
 
 public class ActivityApp extends ActivityBase {
 	private ApplicationInfoEx mAppInfo = null;
@@ -203,14 +205,18 @@ public class ActivityApp extends ActivityBase {
 		swEnabled.setChecked(PrivacyManager.getSettingBool(mAppInfo.getUid(), PrivacyManager.cSettingRestricted, true,
 				false));
 		swEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				PrivacyManager.setSetting(mAppInfo.getUid(), PrivacyManager.cSettingRestricted,
-						Boolean.toString(isChecked));
-			}
-		});
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrivacyManager.setSetting(mAppInfo.getUid(), PrivacyManager.cSettingRestricted,
+                        Boolean.toString(isChecked));
 
-		final ImageView imgCbOnDemand = (ImageView) findViewById(R.id.imgCbOnDemand);
+                // <PEM>
+                manageBlacklists();
+                // </PEM>
+            }
+        });
+
+        final ImageView imgCbOnDemand = (ImageView) findViewById(R.id.imgCbOnDemand);
 		if (PrivacyManager.isApplication(mAppInfo.getUid())
 				&& PrivacyManager.getSettingBool(userId, PrivacyManager.cSettingOnDemand, true, false)) {
 			// Display on-demand state
@@ -315,7 +321,29 @@ public class ActivityApp extends ActivityBase {
 		Meta.annotate(this);
 	}
 
-	@Override
+    // <PEM>
+
+    /**
+     * Manage the blacklists for native access when the switch button (R.id.swEnable)
+     * has been enables/disabled
+     *
+     * - If the button is set to OFF, then the app uid should be deleted from all blacklists
+     * - If the button is set to ON, then the app uid should be added to a blacklist if the respective setting
+     * for the java side is set as well.
+     *
+     */
+    private void manageBlacklists() {
+        final int uid = mAppInfo.getUid();
+
+        NativeAccessManagement.updateSdcardBlacklist(uid);
+        NativeAccessManagement.updateRecordAudioBlacklist(uid);
+        NativeAccessManagement.updateRunCommandBlacklist(uid);
+    }
+
+
+    // </PEM>
+
+    @Override
 	protected void onNewIntent(Intent intent) {
 		Bundle extras = intent.getExtras();
 		if (extras != null && extras.containsKey(cAction) && extras.getInt(cAction) == cActionRefresh) {

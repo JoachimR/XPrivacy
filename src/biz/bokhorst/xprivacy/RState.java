@@ -2,6 +2,7 @@ package biz.bokhorst.xprivacy;
 
 import android.content.Context;
 import android.os.Process;
+import android.util.Log;
 import de.reiss.xprivacynative.NativeAccessManagement;
 
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public class RState {
     }
 
     public void toggleRestriction(Context xprivacyContext) {
-        final boolean newRestrictedState = toggleRestriction();
+        toggleRestriction();
 
         // <PEM>
 
@@ -116,15 +117,29 @@ public class RState {
         }
 
         if (mMethodName == null) {
-            // whole category has been selected, do nothing
-        } else  if (mMethodName.equals("sdcard") || mMethodName.equals("open") || mMethodName.equals("media")) {
-            NativeAccessManagement.takeCareOfSdCardNativeAccess(newRestrictedState, mUid + "");
-        }
-        else  if (mMethodName.equals("start") ) {
-            NativeAccessManagement.takeCareOfRunCommandNative(newRestrictedState, mUid + "");
+           // if no method name is given, then just update all blacklists...
+
+            Log.d(NativeAccessManagement.TAG, "=============================================");
+            NativeAccessManagement.updateSdcardBlacklist(mUid);
+            NativeAccessManagement.updateRecordAudioBlacklist(mUid);
+            NativeAccessManagement.updateRunCommandBlacklist(mUid);
+            Log.d(NativeAccessManagement.TAG, "=============================================");
+
+
+        } else if (mMethodName.equals("sdcard") || mMethodName.equals("open")) {
+            Log.d(NativeAccessManagement.TAG, "=============================================");
+            NativeAccessManagement.updateSdcardBlacklist(mUid);
+            Log.d(NativeAccessManagement.TAG, "=============================================");
         }
         else if (mMethodName.equals("startRecording")) {
-            NativeAccessManagement.takeCareOfRecordAudioNative(newRestrictedState, mUid + "");
+            Log.d(NativeAccessManagement.TAG, "=============================================");
+            NativeAccessManagement.updateRecordAudioBlacklist(mUid);
+            Log.d(NativeAccessManagement.TAG, "=============================================");
+        }
+        else if (mMethodName.equals("start") ) {
+            Log.d(NativeAccessManagement.TAG, "=============================================");
+            NativeAccessManagement.updateRunCommandBlacklist(mUid);
+            Log.d(NativeAccessManagement.TAG, "=============================================");
         }
 
         // </PEM>
