@@ -60,7 +60,7 @@ public class LogIntentSender {
             // check several things before logging
             if (!shouldThisAppBeLogged(applicationInfo)
 
-                    && !isRestrictionCritical(restrictionName)
+//                    && !isRestrictionCritical(restrictionName)
                 // TODO what about isRestrictionCritical? should we really use it?
 
                     ) {
