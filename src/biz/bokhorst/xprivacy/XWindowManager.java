@@ -89,7 +89,5 @@ public class XWindowManager extends XHook {
 	@Override
 	protected void after(XParam param) throws Throwable {
 		// Do nothing
-
-        LogIntentSender.sendLog(param, getClassName(), getRestrictionName(), getMethodName());
     }
 }
